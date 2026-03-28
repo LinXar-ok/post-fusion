@@ -290,7 +290,7 @@ export default function PublishingPage() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-white rounded-[2rem] border-[8px] border-slate-100 shadow-xl overflow-hidden aspect-[9/18] flex flex-col mx-auto max-w-[320px] ring-1 ring-slate-200/50"
+              className="bg-white rounded-[2rem] border-[8px] border-slate-100 shadow-xl overflow-hidden aspect-9/18 flex flex-col mx-auto max-w-[320px] ring-1 ring-slate-200/50"
             >
               <div className="bg-slate-50 border-b border-slate-100 p-4 flex items-center space-x-3">
                 <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center border border-violet-200 shrink-0">
