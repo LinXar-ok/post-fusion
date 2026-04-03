@@ -110,18 +110,18 @@ export default function AnalyticsPage() {
         ))}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2 flex-1 min-h-[400px]">
-        <Card className="bg-white/80 border-slate-200 shadow-sm backdrop-blur-xl overflow-hidden flex flex-col">
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Card className="bg-white/80 border-slate-200 shadow-sm backdrop-blur-xl overflow-hidden">
           <CardHeader>
             <CardTitle className="text-xl font-bold text-slate-900">Posts Created (Last 8 Weeks)</CardTitle>
           </CardHeader>
-          <CardContent className="flex-1 border-t border-slate-100 bg-slate-50/50 p-4">
+          <CardContent className="border-t border-slate-100 bg-slate-50/50 p-4">
             {loading ? (
               <div className="h-full flex items-center justify-center text-sm text-slate-400">Loading…</div>
             ) : posts.length === 0 ? (
               <div className="h-full flex items-center justify-center text-sm text-slate-400">No data yet — start publishing.</div>
             ) : (
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={weeklyData} margin={{ top: 8, right: 8, bottom: 8, left: -16 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                   <XAxis dataKey="week" tick={{ fontSize: 10, fill: "#94a3b8" }} />
@@ -134,17 +134,17 @@ export default function AnalyticsPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white/80 border-slate-200 shadow-sm backdrop-blur-xl overflow-hidden flex flex-col">
+        <Card className="bg-white/80 border-slate-200 shadow-sm backdrop-blur-xl overflow-hidden">
           <CardHeader>
             <CardTitle className="text-xl font-bold text-slate-900">Posts by Platform</CardTitle>
           </CardHeader>
-          <CardContent className="flex-1 border-t border-slate-100 bg-slate-50/50 p-4">
+          <CardContent className="border-t border-slate-100 bg-slate-50/50 p-4">
             {loading ? (
-              <div className="h-full flex items-center justify-center text-sm text-slate-400">Loading…</div>
+              <div className="h-[300px] flex items-center justify-center text-sm text-slate-400">Loading…</div>
             ) : posts.length === 0 ? (
-              <div className="h-full flex items-center justify-center text-sm text-slate-400">No data yet — start publishing.</div>
+              <div className="h-[300px] flex items-center justify-center text-sm text-slate-400">No data yet — start publishing.</div>
             ) : (
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={platformData} margin={{ top: 8, right: 8, bottom: 8, left: -16 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                   <XAxis dataKey="platform" tick={{ fontSize: 11, fill: "#94a3b8" }} />
