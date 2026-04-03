@@ -1,8 +1,15 @@
-# Vista Social Clone - Agent Instructions
+# LinXar Ops: Social - Agent Instructions
+
+## 🎨 Brand Identity
+- **Name:** LinXar Ops: Social
+- **Primary Color:** `#128C7E` (teal)
+- **Secondary Color:** `#0B1020` (deep navy)
+- Use `#128C7E` in place of violet/purple theme colors throughout the UI
+- Use `#0B1020` for primary text on light backgrounds
 
 ## 🧠 Project Context
 This project is a personal social media management platform.
-Key tech stack: TypeScript (strict), Next.js, PostgreSQL (Supabase), Prisma, NextAuth, Redis, and Tailwind CSS.
+Key tech stack: TypeScript (strict), Next.js 16, PostgreSQL (Supabase), Supabase SDK (no Prisma), NextAuth, Tailwind CSS v4, shadcn/ui, Framer Motion.
 Always read existing code before writing new code. Respect patterns already in use.
 
 ## 📄 Important References
@@ -19,6 +26,19 @@ To manage the database schema:
 supabase db push
 ```
 *(Note: Ensure your project is linked first via `supabase link --project-ref iztpngdunsicmlymuemj`)*
+
+## 🏗️ Project Architecture
+
+- **Route Groups:** `(app)/` for authenticated app shell, `(auth)/` for login/register
+- **Middleware:** `src/middleware.ts` (handles auth redirects and proxy)
+- **Publishers:** `src/lib/publishers.ts` - shared helper for LinkedIn, X, Facebook publishing
+- **AI Assistant:** `src/app/api/ai/generate/route.ts` - uses Groq (requires `GROQ_API_KEY`)
+- **Cron:** `/api/cron/process-queue` - runs every 5 min, secured with `CRON_SECRET` in production
+
+## 🔑 Required Environment Variables
+
+- `GROQ_API_KEY` - for AI assistant features (dev)
+- `CRON_SECRET` - for production cron security (add to Vercel env)
 
 <!-- BEGIN:nextjs-agent-rules -->
 # This is NOT the Next.js you know

@@ -20,7 +20,7 @@ export async function Header() {
           <input
             type="search"
             placeholder="Search..."
-            className="h-9 rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 disabled:cursor-not-allowed disabled:opacity-50 pl-9 w-64 lg:w-80 text-slate-900 placeholder:text-slate-400 hover:border-slate-300 hover:bg-white"
+            className="h-9 rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#128C7E] disabled:cursor-not-allowed disabled:opacity-50 pl-9 w-64 lg:w-80 text-slate-900 placeholder:text-slate-400 hover:border-slate-300 hover:bg-white"
           />
         </div>
       </div>
@@ -31,10 +31,10 @@ export async function Header() {
 
         {user ? (
           <form action={signout}>
-            <button title="Sign Out" className="flex items-center rounded-full ring-2 ring-transparent ring-offset-2 ring-offset-white transition-all hover:ring-violet-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 shadow-xs">
+            <button title="Sign Out" className="flex items-center rounded-full ring-2 ring-transparent ring-offset-2 ring-offset-white transition-all hover:ring-[#128C7E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#128C7E] shadow-xs">
               <Avatar className="border border-slate-200">
                 <AvatarImage src={user.user_metadata?.avatar_url || ""} alt={user.user_metadata?.name || "User"} />
-                <AvatarFallback className="bg-violet-100 text-violet-700 font-medium">
+                <AvatarFallback className="bg-[#128C7E]/10 text-[#0B1020] font-medium">
                   {user.user_metadata?.name?.charAt(0) || "U"}
                 </AvatarFallback>
               </Avatar>

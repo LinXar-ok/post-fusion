@@ -4,14 +4,14 @@ import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 
-export async function login(formData: FormData) {
+export async function login(_prevState: unknown, formData: FormData) {
   const supabase = await createClient()
 
   const email = formData.get("email") as string
   const password = formData.get("password") as string
 
   if (!email || !password) {
-    throw new Error("Missing required fields.")
+    return { error: "Please enter both email and password." }
   }
 
   const { error } = await supabase.auth.signInWithPassword({
@@ -20,14 +20,14 @@ export async function login(formData: FormData) {
   })
 
   if (error) {
-    throw new Error(error.message)
+    return { error: error.message }
   }
 
   revalidatePath("/", "layout")
   redirect("/")
 }
 
-export async function register(formData: FormData) {
+export async function register(_prevState: unknown, formData: FormData) {
   const supabase = await createClient()
 
   const email = formData.get("email") as string
@@ -35,22 +35,19 @@ export async function register(formData: FormData) {
   const name = formData.get("name") as string
 
   if (!email || !password || !name) {
-    throw new Error("Missing required fields.")
+    return { error: "Please fill in all fields." }
   }
 
-  // Supabase Auth automatically handles duplicates and hashing
   const { error } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      data: {
-        name,
-      }
+      data: { name }
     }
   })
 
   if (error) {
-    throw new Error(error.message)
+    return { error: error.message }
   }
 
   revalidatePath("/", "layout")
