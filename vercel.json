@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/cron/process-queue",
-      "schedule": "0 9,13,18 * * *"
+      "schedule": "0 8 * * *"
     }
   ]
 }
