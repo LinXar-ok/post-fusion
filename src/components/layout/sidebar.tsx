@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Calendar, Inbox, LayoutDashboard, Settings, Activity, PenSquare, Sparkles, Image as ImageIcon } from "lucide-react";
+import { Calendar, Inbox, LayoutDashboard, Settings, Activity, PenSquare, Sparkles, Image as ImageIcon, Radio } from "lucide-react";
 
 export function Sidebar() {
   const navItems = [
@@ -8,6 +8,7 @@ export function Sidebar() {
     { name: "Media Library", href: "/media", icon: ImageIcon },
     { name: "Calendar", href: "/calendar", icon: Calendar },
     { name: "Inbox", href: "/inbox", icon: Inbox },
+    { name: "Listening", href: "/listening", icon: Radio },
     { name: "Analytics", href: "/analytics", icon: Activity },
     { name: "Settings", href: "/settings", icon: Settings },
   ];
