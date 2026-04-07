@@ -3,6 +3,7 @@ export interface PublishResult {
   status: "success" | "error"
   id?: string
   message?: string
+  warnings?: string[]
 }
 
 interface Profile {
@@ -17,27 +18,100 @@ interface PostPayload {
   media_urls?: string[]
 }
 
+interface LinkedInUploadResponse {
+  value: {
+    asset: string
+    uploadMechanism: {
+      "com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest": {
+        uploadUrl: string
+        headers: Record<string, string>
+      }
+    }
+    mediaArtifact?: string
+  }
+}
+
+async function uploadImageToLinkedIn(accessToken: string, imageUrl: string, owner: string): Promise<string | null> {
+  // Step 1: Register upload
+  const registerRes = await fetch("https://api.linkedin.com/v2/assets?action=registerUpload", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+      "X-Restli-Protocol-Version": "2.0.0",
+    },
+    body: JSON.stringify({
+      registerUploadRequest: {
+        recipes: ["urn:li:digitalmediaRecipe:feedshare-image"],
+        supportedAssets: ["urn:li:digitalmediaAsset:UNKNOWN"],
+        owner,
+      },
+    }),
+  })
+
+  if (!registerRes.ok) return null
+  const registerData: LinkedInUploadResponse = await registerRes.json()
+  const uploadUrl = registerData.value.uploadMechanism["com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest"].uploadUrl
+  const assetUrn = registerData.value.asset
+
+  // Step 2: Download image from source URL
+  const imageRes = await fetch(imageUrl)
+  if (!imageRes.ok) return null
+  const imageBuffer = await imageRes.arrayBuffer()
+
+  // Step 3: Upload binary to LinkedIn presigned URL
+  const uploadRes = await fetch(uploadUrl, {
+    method: "PUT",
+    headers: {
+      "Authorization": `Bearer ${accessToken}`,
+      "x-amz-storage-class": "STANDARD",
+    },
+    body: imageBuffer,
+  })
+
+  if (!uploadRes.ok) return null
+  return assetUrn
+}
+
 export async function publishToLinkedIn(profile: Profile, post: PostPayload): Promise<PublishResult> {
   let finalContent = post.content
   if (post.hashtags && post.hashtags.length > 0) {
     finalContent += `\n\n${post.hashtags.map(h => `#${h}`).join(" ")}`
   }
+
+  const owner = `urn:li:person:${profile.profile_id}`
+  let mediaUrn: string | null = null
+
   if (post.media_urls && post.media_urls.length > 0) {
-    finalContent += `\n\nImage: ${post.media_urls[0]}`
+    mediaUrn = await uploadImageToLinkedIn(profile.access_token, post.media_urls[0], owner)
   }
 
-  const body = {
-    author: `urn:li:person:${profile.profile_id}`,
+  const body: Record<string, unknown> = {
+    author: owner,
     lifecycleState: "PUBLISHED",
     specificContent: {
       "com.linkedin.ugc.ShareContent": {
         shareCommentary: { text: finalContent },
-        shareMediaCategory: "NONE",
+        shareMediaCategory: mediaUrn ? "IMAGE" : "NONE",
       },
     },
     visibility: {
       "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC",
     },
+  }
+
+  if (mediaUrn) {
+    const shareContent = body.specificContent as Record<string, unknown>
+    shareContent["com.linkedin.ugc.ShareContent"] = {
+      shareCommentary: { text: finalContent },
+      shareMediaCategory: "IMAGE",
+      media: [{
+        status: "READY",
+        description: { text: "Post image" },
+        media: mediaUrn,
+        title: { text: "Post image" },
+      }],
+    }
   }
 
   const res = await fetch("https://api.linkedin.com/v2/ugcPosts", {
@@ -51,7 +125,13 @@ export async function publishToLinkedIn(profile: Profile, post: PostPayload): Pr
   })
 
   const data = await res.json().catch(() => ({}))
-  if (res.ok) return { platform: "linkedin", status: "success", id: data.id }
+  if (res.ok) {
+    const result: PublishResult = { platform: "linkedin", status: "success", id: data.id }
+    if (post.media_urls && post.media_urls.length > 0 && !mediaUrn) {
+      result.warnings = ["Image upload failed, post published as text-only"]
+    }
+    return result
+  }
   return { platform: "linkedin", status: "error", message: data.message || "Failed to post to LinkedIn" }
 }
 
