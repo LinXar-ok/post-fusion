@@ -14,6 +14,7 @@ import {
 } from "lucide-react"
 import { FaLinkedin, FaXTwitter, FaInstagram, FaFacebook } from "react-icons/fa6"
 import { createClient } from "@/lib/supabase/client"
+import { ImagePickerModal } from "@/components/media/image-picker-modal"
 
 type AIType = "improve" | "hashtags" | "suggest"
 
@@ -30,6 +31,7 @@ export default function PublishingPage() {
   const [showSchedule, setShowSchedule] = useState(false)
   const [showMetadata, setShowMetadata] = useState(false)
   const [showBulk, setShowBulk] = useState(false)
+  const [showImagePicker, setShowImagePicker] = useState(false)
 
   // Bulk CSV state
   const [csvRaw, setCsvRaw] = useState<Papa.ParseResult<string[]> | null>(null)
@@ -55,6 +57,11 @@ export default function PublishingPage() {
       reader.onload = (e) => setMediaPreview(e.target?.result as string)
       reader.readAsDataURL(file)
     }
+  }
+
+  const handleMediaFromLibrary = (selection: { publicUrl: string; name: string }) => {
+    setMediaFile({ name: selection.name } as File)
+    setMediaPreview(selection.publicUrl)
   }
 
   const handleAI = async (type: AIType) => {
@@ -329,6 +336,9 @@ export default function PublishingPage() {
                   <Button variant="ghost" size="icon" onClick={() => fileInputRef.current?.click()} title="Upload image" className="text-slate-500 hover:text-[#128C7E] hover:bg-[#128C7E]/5 rounded-full h-9 w-9">
                     <ImageIcon className="w-5 h-5" />
                   </Button>
+                  <Button variant="ghost" size="icon" onClick={() => setShowImagePicker(true)} title="Choose from library" className="text-slate-500 hover:text-[#128C7E] hover:bg-[#128C7E]/5 rounded-full h-9 w-9">
+                    <ImageIcon className="w-5 h-5" />
+                  </Button>
                   <Button variant="ghost" size="icon" onClick={() => setShowMetadata(!showMetadata)} title="Hashtags & Tone"
                     className={`rounded-full h-9 w-9 ${showMetadata ? "text-[#128C7E] bg-[#128C7E]/10" : "text-slate-500 hover:text-[#128C7E] hover:bg-[#128C7E]/5"}`}>
                     <Hash className="w-5 h-5" />
@@ -522,6 +532,13 @@ export default function PublishingPage() {
           </div>
         </div>
       </div>
+      </div>
+
+      <ImagePickerModal
+        open={showImagePicker}
+        onOpenChange={setShowImagePicker}
+        onSelect={handleMediaFromLibrary}
+      />
     </div>
   )
 }
