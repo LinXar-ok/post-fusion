@@ -1,9 +1,11 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { TrendingUp, CheckCircle2, Clock, AlertTriangle, FileText } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { TrendingUp, CheckCircle2, Clock, AlertTriangle, FileText, Download, ChevronDown } from "lucide-react"
+import { exportCSV, buildReportTitle } from "@/lib/report-export"
 import {
   ResponsiveContainer,
   BarChart,
@@ -51,10 +53,13 @@ function getPlatformData(posts: Post[]) {
   }))
 }
 
+type Datum = { platform: string; posts: number }
+
 export default function AnalyticsPage() {
   const supabase = createClient()
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
+  const [exportOpen, setExportOpen] = useState(false)
 
   useEffect(() => {
     async function fetchData() {
@@ -74,7 +79,6 @@ export default function AnalyticsPage() {
   const published = posts.filter(p => p.status === "published")
   const scheduled = posts.filter(p => p.status === "scheduled")
   const failed = posts.filter(p => p.status === "failed")
-
   const weeklyData = getWeeklyData(posts)
   const platformData = getPlatformData(posts)
 
@@ -85,11 +89,79 @@ export default function AnalyticsPage() {
     { title: "Failed", value: failed.length, icon: AlertTriangle, color: "rose" },
   ]
 
+  const dropdownRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    function handler(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) setExportOpen(false)
+    }
+    if (exportOpen) document.addEventListener("mousedown", handler)
+    return () => document.removeEventListener("mousedown", handler)
+  }, [exportOpen])
+
+  const handleExportCSV = () => {
+    exportCSV(posts, null, null)
+    setExportOpen(false)
+  }
+
+  const handleExportPDF = async () => {
+    setExportOpen(false)
+    const { PDFReport } = await import("@/components/reports/pdf-report")
+    const { pdf } = await import("@react-pdf/renderer")
+    const doc = pdf(
+      <PDFReport
+        posts={posts}
+        dateRange={buildReportTitle(null, null)}
+        stats={{ total: posts.length, published: published.length, scheduled: scheduled.length, failed: failed.length }}
+        platformData={platformData}
+      />
+    )
+    const blob = await doc.toBlob()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `linxar-report-${Date.now()}.pdf`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <div className="p-6 md:p-8 lg:p-10 max-w-7xl mx-auto w-full relative z-10 h-full flex flex-col">
       <div className="mb-8 shrink-0">
-        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-2">Analytics</h1>
-        <p className="text-slate-500 text-lg">Detailed performance tracking and post breakdown.</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-2">Analytics</h1>
+            <p className="text-slate-500 text-lg">Detailed performance tracking and post breakdown.</p>
+          </div>
+          <div className="relative" ref={dropdownRef}>
+            <Button
+              variant="outline"
+              className="h-9 text-sm bg-white border-slate-200 hover:bg-slate-50 text-[#0B1020] font-semibold shadow-xs"
+              onClick={() => setExportOpen(!exportOpen)}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Export
+              <ChevronDown className="w-3 h-3 ml-1 text-slate-400" />
+            </Button>
+            {exportOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl border border-slate-200 shadow-lg z-50 overflow-hidden">
+                <button
+                  className="w-full px-4 py-2.5 text-sm text-left text-slate-700 hover:bg-[#128C7E]/5 flex items-center gap-2"
+                  onClick={handleExportCSV}
+                >
+                  <FileText className="w-4 h-4 text-[#128C7E]" /> Export as CSV
+                </button>
+                <button
+                  className="w-full px-4 py-2.5 text-sm text-left text-slate-700 hover:bg-[#128C7E]/5 flex items-center gap-2"
+                  onClick={handleExportPDF}
+                >
+                  <Download className="w-4 h-4 text-[#128C7E]" /> Export as PDF
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8 shrink-0">
@@ -117,9 +189,9 @@ export default function AnalyticsPage() {
           </CardHeader>
           <CardContent className="border-t border-slate-100 bg-slate-50/50 p-4">
             {loading ? (
-              <div className="h-full flex items-center justify-center text-sm text-slate-400">Loading…</div>
+              <div className="h-[300px] flex items-center justify-center text-sm text-slate-400">Loading…</div>
             ) : posts.length === 0 ? (
-              <div className="h-full flex items-center justify-center text-sm text-slate-400">No data yet — start publishing.</div>
+              <div className="h-[300px] flex items-center justify-center text-sm text-slate-400">No data yet — start publishing.</div>
             ) : (
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={weeklyData} margin={{ top: 8, right: 8, bottom: 8, left: -16 }}>
