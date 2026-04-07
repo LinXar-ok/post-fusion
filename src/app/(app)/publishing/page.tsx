@@ -1,6 +1,8 @@
 "use client"
 
 import { useState, useRef } from "react"
+import Papa from "papaparse"
+import { parseCSV } from "@/lib/csv-parser"
 import { motion, AnimatePresence } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -8,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import {
   Image as ImageIcon, Calendar as CalendarIcon, Hash, Smile, Send,
-  CheckCircle2, AlertCircle, Loader2, X, Clock, Sparkles, WandSparkles,
+  CheckCircle2, AlertCircle, Loader2, X, Clock, Sparkles, WandSparkles, FileText, Upload,
 } from "lucide-react"
 import { FaLinkedin, FaXTwitter, FaInstagram, FaFacebook } from "react-icons/fa6"
 import { createClient } from "@/lib/supabase/client"
@@ -27,8 +29,12 @@ export default function PublishingPage() {
   const [scheduledFor, setScheduledFor] = useState("")
   const [showSchedule, setShowSchedule] = useState(false)
   const [showMetadata, setShowMetadata] = useState(false)
+  const [showBulk, setShowBulk] = useState(false)
 
-  // AI assistant state
+  // Bulk CSV state
+  const [csvRaw, setCsvRaw] = useState<Papa.ParseResult<string[]> | null>(null)
+  const [csvParsed, setCsvParsed] = useState<Awaited<ReturnType<typeof parseCSV>>>([])
+  const [csvState, setCsvState] = useState<"idle" | "parsed" | "inserting" | "done" | "error">("idle")
   const [showAI, setShowAI] = useState(false)
   const [aiLoading, setAiLoading] = useState(false)
   const [aiResult, setAiResult] = useState("")
@@ -127,11 +133,48 @@ export default function PublishingPage() {
       setStatus("success")
       setFeedbackMsg(data.message || (payload.scheduled_for ? "Successfully scheduled!" : "Post published to all selected platforms!"))
       setContent(""); setMediaFile(null); setMediaPreview(null); setHashtagsInput("")
-      setEmotion(""); setScheduledFor(""); setShowSchedule(false); setShowMetadata(false)
+      setEmotion(""); setScheduledFor(""); setShowSchedule(false); setShowMetadata(false); setShowBulk(false)
       setAiResult(""); setAiType(null)
+      setCsvRaw(null); setCsvParsed([]); setCsvState("idle")
     } catch (err: unknown) {
       setStatus("error")
       setFeedbackMsg(err instanceof Error ? err.message : "An unexpected error occurred.")
+    }
+  }
+
+  const handleCSVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      const csvText = ev.target?.result as string
+      const rows = parseCSV(csvText)
+      setCsvParsed(rows)
+      setCsvState(rows.length > 0 ? "parsed" : "error")
+    }
+    reader.readAsText(file)
+  }
+
+  const handleCSVSubmit = async () => {
+    const validRows = csvParsed.filter(r => !r.error)
+    if (validRows.length === 0) return
+    setCsvState("inserting")
+    try {
+      const res = await fetch("/api/posts/bulk-insert", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rows: validRows }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Bulk insert failed")
+      setCsvState("done")
+      setFeedbackMsg(`Successfully scheduled ${data.inserted} posts!`)
+      setStatus("success")
+      setCsvParsed([]); setCsvRaw(null)
+    } catch (err: unknown) {
+      setCsvState("error")
+      setFeedbackMsg(err instanceof Error ? err.message : "Bulk insert failed")
+      setStatus("error")
     }
   }
 
@@ -304,6 +347,11 @@ export default function PublishingPage() {
                     <CalendarIcon className="w-4 h-4 mr-2" />
                     {scheduledFor ? "Scheduled!" : "Schedule for later"}
                   </Button>
+                  <Button variant="outline" size="sm" onClick={() => setShowBulk(!showBulk)}
+                    className={`shadow-xs h-9 rounded-lg ${showBulk ? "text-violet-600 border-violet-200 bg-violet-50" : "text-slate-600 border-slate-200 hover:bg-slate-50"}`}>
+                    <FileText className="w-4 h-4 mr-2" />
+                    Bulk Upload
+                  </Button>
                 </div>
                 <div className="text-xs font-medium text-slate-400">{content.length} chars</div>
               </div>
@@ -319,7 +367,125 @@ export default function PublishingPage() {
           </CardContent>
         </Card>
 
-        {/* Live Preview Column */}
+        {/* Bulk CSV Upload Section */}
+        {showBulk && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="lg:col-span-2">
+            <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-xl">
+              <CardHeader className="border-b border-slate-100 bg-slate-50/50 pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-violet-500" />
+                    Bulk Schedule Posts
+                  </CardTitle>
+                  <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setShowBulk(false)}>
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+                <p className="text-xs text-slate-500 mt-1">
+                  CSV format: <code className="bg-slate-100 px-1 py-0.5 rounded text-[10px]">content,hashtags,platforms,scheduled_datetime</code> — use semicolons for multi-value fields
+                </p>
+              </CardHeader>
+              <CardContent className="p-6">
+                {csvState === "idle" && (
+                  <div className="border-2 border-dashed border-slate-200 rounded-xl p-10 text-center hover:border-violet-300 transition-colors">
+                    <Upload className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+                    <p className="text-sm font-medium text-slate-500 mb-1">Upload your CSV file</p>
+                    <p className="text-xs text-slate-400 mb-4">CSV will be parsed and previewed before scheduling</p>
+                    <input type="file" accept=".csv" id="csv-input" onChange={handleCSVUpload} className="hidden" />
+                    <label htmlFor="csv-input" className="cursor-pointer inline-flex items-center rounded-md bg-white border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 shadow-xs transition-colors">
+                      <Upload className="w-4 h-4 mr-2" />
+                      Choose CSV File
+                    </label>
+                  </div>
+                )}
+
+                {csvState === "parsed" && (
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-sm font-medium text-slate-600">
+                        {csvParsed.filter(r => !r.error).length} valid, {csvParsed.filter(r => !!r.error).length} invalid
+                      </span>
+                    </div>
+                    <div className="max-h-64 overflow-y-auto border border-slate-200 rounded-xl mb-4">
+                      <table className="w-full text-xs">
+                        <thead className="bg-slate-50">
+                          <tr>
+                            <th className="text-left p-2 font-semibold text-slate-600">#</th>
+                            <th className="text-left p-2 font-semibold text-slate-600">Content</th>
+                            <th className="text-left p-2 font-semibold text-slate-600 w-28">Platforms</th>
+                            <th className="text-left p-2 font-semibold text-slate-600 w-36">Schedule</th>
+                            <th className="text-left p-2 font-semibold text-slate-600 w-20">Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {csvParsed.map((r, i) => (
+                            <tr key={i} className={`border-t border-slate-100 ${r.error ? "bg-rose-50/50" : ""}`}>
+                              <td className="p-2 text-slate-400">{i + 1}</td>
+                              <td className="p-2 text-slate-700 max-w-xs truncate">{r.content}</td>
+                              <td className="p-2 text-slate-500">{r.platforms.join(", ")}</td>
+                              <td className="p-2 text-slate-500 font-mono">{r.scheduled_datetime}</td>
+                              <td className="p-2">
+                                {r.error ? (
+                                  <span className="text-[10px] font-medium text-rose-500">{r.error}</span>
+                                ) : (
+                                  <span className="text-[10px] font-medium text-emerald-500">Valid</span>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    <div className="flex gap-2 justify-end">
+                      <Button variant="outline" size="sm" onClick={() => { setCsvParsed([]); setCsvState("idle") }}>
+                        Choose Another
+                      </Button>
+                      <Button size="sm" onClick={handleCSVSubmit}
+                        disabled={csvParsed.filter(r => !r.error).length === 0}
+                        className="bg-violet-600 hover:bg-violet-700 text-white">
+                        {csvParsed.filter(r => !r.error).length > 0 ? (
+                          <>
+                            <Clock className="w-3.5 h-3.5 mr-1.5" />
+                            Schedule {csvParsed.filter(r => !r.error).length} Posts
+                          </>
+                        ) : "No Valid Posts"}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {csvState === "inserting" && (
+                  <div className="flex flex-col items-center justify-center py-12">
+                    <Loader2 className="w-8 h-8 text-violet-500 animate-spin mb-3" />
+                    <p className="text-sm font-medium text-slate-500">Scheduling posts…</p>
+                  </div>
+                )}
+
+                {csvState === "done" && (
+                  <div className="flex flex-col items-center justify-center py-10">
+                    <CheckCircle2 className="w-12 h-12 text-emerald-500 mb-3" />
+                    <p className="text-sm font-medium text-slate-700">Posts scheduled successfully!</p>
+                    <p className="text-xs text-slate-400 mt-1">The cron job will pick them up at their scheduled times.</p>
+                    <Button variant="outline" size="sm" className="mt-4" onClick={() => { setCsvParsed([]); setCsvState("idle") }}>
+                      Upload Another
+                    </Button>
+                  </div>
+                )}
+
+                {csvState === "error" && csvParsed.length === 0 && (
+                  <div className="flex flex-col items-center justify-center py-10">
+                    <AlertCircle className="w-12 h-12 text-rose-500 mb-3" />
+                    <p className="text-sm font-medium text-slate-700">No valid posts found</p>
+                    <p className="text-xs text-slate-400 mt-1">Check your CSV format and try again.</p>
+                    <Button variant="outline" size="sm" className="mt-4" onClick={() => setCsvState("idle")}>
+                      Upload Another
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
         <div className="lg:col-span-1 border-l border-slate-200/60 pl-8 hidden lg:block overflow-y-auto">
           <div className="sticky top-0">
             <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-6">Live Preview</h3>
