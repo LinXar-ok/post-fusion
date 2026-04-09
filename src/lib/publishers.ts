@@ -32,6 +32,8 @@ interface LinkedInUploadResponse {
 }
 
 async function uploadImageToLinkedIn(accessToken: string, imageUrl: string, owner: string): Promise<string | null> {
+  console.log("[LinkedIn] Starting image upload, URL:", imageUrl)
+
   // Step 1: Register upload
   const registerRes = await fetch("https://api.linkedin.com/v2/assets?action=registerUpload", {
     method: "POST",
@@ -43,21 +45,43 @@ async function uploadImageToLinkedIn(accessToken: string, imageUrl: string, owne
     body: JSON.stringify({
       registerUploadRequest: {
         recipes: ["urn:li:digitalmediaRecipe:feedshare-image"],
-        supportedAssets: ["urn:li:digitalmediaAsset:UNKNOWN"],
         owner,
       },
     }),
   })
 
-  if (!registerRes.ok) return null
-  const registerData: LinkedInUploadResponse = await registerRes.json()
+  if (!registerRes.ok) {
+    const errText = await registerRes.text().catch(() => "")
+    console.error("LinkedIn register upload failed:", registerRes.status, errText)
+    return null
+  }
+  let registerData: LinkedInUploadResponse
+  try {
+    registerData = await registerRes.json()
+  } catch (e) {
+    const text = await registerRes.text()
+    console.error("[LinkedIn] Failed to parse register response as JSON:", text.slice(0, 500))
+    return null
+  }
+  console.log("[LinkedIn] Register response:", JSON.stringify(registerData).slice(0, 200))
+
+  if (!registerData.value?.uploadMechanism) {
+    console.error("[LinkedIn] No upload mechanism in response:", registerData)
+    return null
+  }
+
   const uploadUrl = registerData.value.uploadMechanism["com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest"].uploadUrl
   const assetUrn = registerData.value.asset
 
   // Step 2: Download image from source URL
   const imageRes = await fetch(imageUrl)
-  if (!imageRes.ok) return null
+  console.log("[LinkedIn] Fetch image response:", imageRes.status, imageRes.headers.get("content-type"))
+  if (!imageRes.ok) {
+    console.error("Failed to fetch image from URL:", imageUrl, imageRes.status)
+    return null
+  }
   const imageBuffer = await imageRes.arrayBuffer()
+  console.log("[LinkedIn] Image buffer size:", imageBuffer.byteLength)
 
   // Step 3: Upload binary to LinkedIn presigned URL
   const uploadRes = await fetch(uploadUrl, {
@@ -69,7 +93,10 @@ async function uploadImageToLinkedIn(accessToken: string, imageUrl: string, owne
     body: imageBuffer,
   })
 
-  if (!uploadRes.ok) return null
+  if (!uploadRes.ok) {
+    console.error("LinkedIn binary upload failed:", uploadRes.status, await uploadRes.text().catch(() => ""))
+    return null
+  }
   return assetUrn
 }
 
@@ -83,7 +110,9 @@ export async function publishToLinkedIn(profile: Profile, post: PostPayload): Pr
   let mediaUrn: string | null = null
 
   if (post.media_urls && post.media_urls.length > 0) {
+    console.log("[LinkedIn] Attempting to upload image, URL:", post.media_urls[0])
     mediaUrn = await uploadImageToLinkedIn(profile.access_token, post.media_urls[0], owner)
+    console.log("[LinkedIn] Image upload result, urn:", mediaUrn)
   }
 
   const body: Record<string, unknown> = {

@@ -25,6 +25,7 @@ export default function PublishingPage() {
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([])
   const [mediaFile, setMediaFile] = useState<File | null>(null)
   const [mediaPreview, setMediaPreview] = useState<string | null>(null)
+  const [mediaUrl, setMediaUrl] = useState<string | null>(null) // For library selections (already uploaded)
   const [hashtagsInput, setHashtagsInput] = useState("")
   const [emotion, setEmotion] = useState("")
   const [scheduledFor, setScheduledFor] = useState("")
@@ -60,7 +61,8 @@ export default function PublishingPage() {
   }
 
   const handleMediaFromLibrary = (selection: { publicUrl: string; name: string }) => {
-    setMediaFile({ name: selection.name } as File)
+    setMediaFile(null) // No file to upload - already in storage
+    setMediaUrl(selection.publicUrl) // Use existing URL directly
     setMediaPreview(selection.publicUrl)
   }
 
@@ -114,10 +116,27 @@ export default function PublishingPage() {
       if (!user) throw new Error("Authentication required.")
 
       let media_urls: string[] = []
-      if (mediaFile) {
-        const fileExt = mediaFile.name.split(".").pop()
-        const fileName = `${user.id}/${Date.now()}_media.${fileExt}`
-        const { data, error } = await supabase.storage.from("media").upload(fileName, mediaFile)
+      // Handle media from library (already uploaded - just use URL directly)
+      if (mediaUrl) {
+        media_urls.push(mediaUrl)
+      }
+      // Handle new file upload
+      else if (mediaFile) {
+        const fileNameParts = mediaFile.name.split(".")
+        const fileExt = fileNameParts.length > 1 ? fileNameParts.pop()?.toLowerCase() : null
+        // Use explicit content-type from file, or derive from extension, or default to image/jpeg
+        let contentType = mediaFile.type
+        if (!contentType || !contentType.startsWith("image/")) {
+          const extToMime: Record<string, string> = {
+            jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", gif: "image/gif", webp: "image/webp", svg: "image/svg+xml"
+          }
+          contentType = fileExt ? (extToMime[fileExt] || "image/jpeg") : "image/jpeg"
+        }
+        const fileName = `${user.id}/${Date.now()}_media.${fileExt || "jpg"}`
+        const { data, error } = await supabase.storage.from("media").upload(fileName, mediaFile, {
+          contentType,
+          upsert: false,
+        })
         if (error) throw new Error(`Media upload failed: ${error.message}`)
         const { data: publicUrlData } = supabase.storage.from("media").getPublicUrl(data.path)
         media_urls.push(publicUrlData.publicUrl)
@@ -137,9 +156,17 @@ export default function PublishingPage() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || "Failed to orchestrate publication")
 
+      // Check for warnings (e.g., image upload failures)
+      const warnings = data.results?.flatMap((r: { warnings?: string[] }) => r.warnings || []) || []
+      const hasImageWarning = warnings.some((w: string) => w.toLowerCase().includes("image"))
+
       setStatus("success")
-      setFeedbackMsg(data.message || (payload.scheduled_for ? "Successfully scheduled!" : "Post published to all selected platforms!"))
-      setContent(""); setMediaFile(null); setMediaPreview(null); setHashtagsInput("")
+      let msg = data.message || (payload.scheduled_for ? "Successfully scheduled!" : "Post published to all selected platforms!")
+      if (hasImageWarning) {
+        msg += " Note: Image could not be attached."
+      }
+      setFeedbackMsg(msg)
+      setContent(""); setMediaFile(null); setMediaPreview(null); setMediaUrl(null); setHashtagsInput("")
       setEmotion(""); setScheduledFor(""); setShowSchedule(false); setShowMetadata(false); setShowBulk(false)
       setAiResult(""); setAiType(null)
       setCsvRaw(null); setCsvParsed([]); setCsvState("idle")
@@ -241,7 +268,7 @@ export default function PublishingPage() {
               {mediaPreview && (
                 <div className="relative inline-block">
                   <img src={mediaPreview} alt="Upload preview" className="h-32 object-cover rounded-lg border border-slate-200 shadow-sm" />
-                  <Button variant="secondary" size="icon" className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-slate-800 text-white hover:bg-slate-900 shadow-md"
+                  <Button variant="destructive" size="icon" className="absolute -top-2 -right-2 h-6 w-6 rounded-full shadow-md"
                     onClick={() => { setMediaPreview(null); setMediaFile(null) }}>
                     <X className="w-3 h-3" />
                   </Button>
@@ -532,10 +559,9 @@ export default function PublishingPage() {
           </div>
         </div>
       </div>
-      </div>
 
       <ImagePickerModal
-        open={showImagePicker}
+        isOpen={showImagePicker}
         onOpenChange={setShowImagePicker}
         onSelect={handleMediaFromLibrary}
       />

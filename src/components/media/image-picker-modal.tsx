@@ -13,11 +13,11 @@ type MediaFile = {
 }
 
 export function ImagePickerModal({
-  open,
+  isOpen,
   onOpenChange,
   onSelect,
 }: {
-  open: boolean
+  isOpen: boolean
   onOpenChange: (open: boolean) => void
   onSelect: (file: { publicUrl: string; name: string }) => void
 }) {
@@ -28,14 +28,14 @@ export function ImagePickerModal({
   const [userId, setUserId] = useState<string | null>(null)
 
   useEffect(() => {
-    if (open) {
+    if (isOpen) {
       supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null))
     }
-  }, [open])
+  }, [isOpen])
 
   useEffect(() => {
-    if (open && userId) loadFiles(userId)
-  }, [open, userId])
+    if (isOpen && userId) loadFiles(userId)
+  }, [isOpen, userId])
 
   const loadFiles = async (uid: string) => {
     setLoading(true)
@@ -60,7 +60,7 @@ export function ImagePickerModal({
 
   return (
     <AnimatePresence>
-      {open && (
+      {isOpen && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
