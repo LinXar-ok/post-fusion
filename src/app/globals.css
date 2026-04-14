@@ -102,47 +102,59 @@
 }
 
 /* ─────────────────────────────────────────────────────────────
-   DARK MODE — Deep navy neumorphic surface
+   DARK MODE — Two-layer deep navy neumorphic surface
+   Page bg (#0D1426) is darker than nm-bg (#1C2B45) so cards
+   visibly float above the page. Shadows increased so depth
+   is perceptible on a dark base.
    ───────────────────────────────────────────────────────────── */
 .dark {
-  --nm-bg: #1A1E2D;
-  --nm-raised:    6px 6px 14px rgba(0, 0, 0, 0.50), -6px -6px 14px rgba(255, 255, 255, 0.04);
-  --nm-raised-sm: 3px 3px  8px rgba(0, 0, 0, 0.45), -3px -3px  8px rgba(255, 255, 255, 0.035);
-  --nm-raised-xs: 2px 2px  5px rgba(0, 0, 0, 0.40), -2px -2px  5px rgba(255, 255, 255, 0.030);
-  --nm-inset:     inset 4px 4px 10px rgba(0, 0, 0, 0.50), inset -4px -4px 10px rgba(255, 255, 255, 0.04);
-  --nm-inset-sm:  inset 2px 2px  6px rgba(0, 0, 0, 0.45), inset -2px -2px  6px rgba(255, 255, 255, 0.035);
-  --nm-teal-glow: 0 0 0 2px rgba(18, 140, 126, 0.35);
+  /* Surface: notably lighter than the page background — this
+     gives neumorphic shadows room to breathe */
+  --nm-bg: #1C2B45;
 
-  --background:            oklch(0.187 0.035 267);   /* #1A1E2D */
-  --foreground:            oklch(0.923 0.008 252);   /* #E4E8EF */
-  --card:                  oklch(0.187 0.035 267);
-  --card-foreground:       oklch(0.923 0.008 252);
-  --popover:               oklch(0.220 0.040 267);
-  --popover-foreground:    oklch(0.923 0.008 252);
-  --primary:               oklch(0.554 0.098 181);
+  /* Stronger contrast: deeper darks + more visible highlights */
+  --nm-raised:    6px 6px 16px rgba(0, 0, 0, 0.70), -6px -6px 16px rgba(255, 255, 255, 0.065);
+  --nm-raised-sm: 3px 3px  9px rgba(0, 0, 0, 0.65), -3px -3px  9px rgba(255, 255, 255, 0.055);
+  --nm-raised-xs: 2px 2px  5px rgba(0, 0, 0, 0.55), -2px -2px  5px rgba(255, 255, 255, 0.045);
+  --nm-inset:     inset 4px 4px 12px rgba(0, 0, 0, 0.65), inset -4px -4px 12px rgba(255, 255, 255, 0.055);
+  --nm-inset-sm:  inset 2px 2px  7px rgba(0, 0, 0, 0.60), inset -2px -2px  7px rgba(255, 255, 255, 0.050);
+  --nm-teal-glow: 0 0 0 2px rgba(18, 140, 126, 0.40);
+
+  /* Page bg: deep navy — visually distinct from nm-bg surfaces */
+  --background:            oklch(0.133 0.038 252);   /* #0D1426 */
+  /* Warm blue-white — softer than pure white, easier on eyes */
+  --foreground:            oklch(0.855 0.018 228);   /* #C8D6E5 */
+  /* Card / surface — matches nm-bg */
+  --card:                  oklch(0.210 0.042 248);   /* #1C2B45 */
+  --card-foreground:       oklch(0.855 0.018 228);
+  --popover:               oklch(0.235 0.045 248);
+  --popover-foreground:    oklch(0.855 0.018 228);
+  --primary:               oklch(0.554 0.098 181);   /* #128C7E */
   --primary-foreground:    oklch(0.985 0 0);
-  --secondary:             oklch(0.220 0.040 267);
-  --secondary-foreground:  oklch(0.923 0.008 252);
-  --muted:                 oklch(0.220 0.040 267);
-  --muted-foreground:      oklch(0.620 0.020 260);
-  --accent:                oklch(0.220 0.040 267);
-  --accent-foreground:     oklch(0.923 0.008 252);
+  --secondary:             oklch(0.235 0.045 248);
+  --secondary-foreground:  oklch(0.855 0.018 228);
+  --muted:                 oklch(0.235 0.045 248);
+  /* Muted text: sufficient contrast on #1C2B45 surface */
+  --muted-foreground:      oklch(0.525 0.028 238);   /* #607888 */
+  --accent:                oklch(0.235 0.045 248);
+  --accent-foreground:     oklch(0.855 0.018 228);
   --destructive:           oklch(0.704 0.191 22.216);
-  --border:                oklch(1 0 0 / 8%);
-  --input:                 oklch(1 0 0 / 10%);
+  --border:                oklch(1 0 0 / 7%);
+  --input:                 oklch(1 0 0 / 9%);
   --ring:                  oklch(0.554 0.098 181);
   --chart-1:               oklch(0.554 0.098 181);
   --chart-2:               oklch(0.550 0.150 220);
   --chart-3:               oklch(0.650 0.120 150);
   --chart-4:               oklch(0.700 0.100 90);
   --chart-5:               oklch(0.600 0.130 30);
-  --sidebar:               oklch(0.187 0.035 267);
-  --sidebar-foreground:    oklch(0.923 0.008 252);
+  /* Sidebar matches card surface */
+  --sidebar:               oklch(0.210 0.042 248);
+  --sidebar-foreground:    oklch(0.855 0.018 228);
   --sidebar-primary:       oklch(0.554 0.098 181);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent:        oklch(0.220 0.040 267);
-  --sidebar-accent-foreground: oklch(0.923 0.008 252);
-  --sidebar-border:        oklch(1 0 0 / 8%);
+  --sidebar-accent:        oklch(0.235 0.045 248);
+  --sidebar-accent-foreground: oklch(0.855 0.018 228);
+  --sidebar-border:        oklch(1 0 0 / 7%);
   --sidebar-ring:          oklch(0.554 0.098 181);
 }
 
@@ -152,10 +164,36 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* Smooth color-scheme transitions when toggling dark mode */
+    transition: background-color 0.3s ease, color 0.2s ease;
   }
   html {
     @apply font-sans;
   }
+
+  /* Ensure native inputs inherit nm color context */
+  input, textarea, select {
+    color-scheme: light dark;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Neumorphic motion: respect prefers-reduced-motion
+   ───────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Teal pulse keyframe — used on active indicators
+   ───────────────────────────────────────────────────────────── */
+@keyframes teal-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(18,140,126,0.35); }
+  50%       { box-shadow: 0 0 0 6px rgba(18,140,126,0); }
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -169,4 +207,6 @@
   .nm-inset-sm  { box-shadow: var(--nm-inset-sm); }
   .nm-teal-ring { box-shadow: var(--nm-teal-glow); }
   .font-display { font-family: var(--font-display), var(--font-sans), sans-serif; }
+  /* Active nav dot pulsing */
+  .nm-pulse     { animation: teal-pulse 2s ease-in-out infinite; }
 }

@@ -74,7 +74,7 @@ export function Sidebar() {
               />
               <span>{item.name}</span>
               {active && (
-                <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[#128C7E] shrink-0" />
+                <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[#128C7E] shrink-0 nm-pulse" />
               )}
             </Link>
           );

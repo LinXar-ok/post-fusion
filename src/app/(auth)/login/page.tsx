@@ -1,111 +1,263 @@
 "use client"
 
 import { login } from "@/app/actions/auth"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import Link from "next/link"
-import { motion } from "framer-motion"
-import { Sparkles, ArrowRight } from "lucide-react"
+import { motion, useReducedMotion } from "framer-motion"
+import {
+  Sparkles, ArrowRight, Mail, Lock,
+  BarChart3, Calendar, CheckCircle, Users,
+} from "lucide-react"
 import { useActionState } from "react"
 
+/* ─── Floating preview card ─────────────────────────────────── */
+function FloatCard({
+  delay, children, className,
+}: { delay: number; children: React.ReactNode; className?: string }) {
+  const reduced = useReducedMotion()
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={reduced
+        ? { opacity: 1, y: 0 }
+        : { opacity: 1, y: [0, -6, 0] }}
+      transition={reduced
+        ? { duration: 0.5, delay }
+        : { opacity: { duration: 0.5, delay }, y: { duration: 4, delay: delay + 0.5, repeat: Infinity, ease: "easeInOut" } }}
+      className={`rounded-2xl p-4 bg-[var(--nm-bg)] ${className ?? ""}`}
+      style={{ boxShadow: "var(--nm-raised)" }}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
+/* ─── Animated right-panel illustration ─────────────────────── */
+function ProductPreview() {
+  return (
+    <div className="relative w-full h-full flex items-center justify-center p-12 overflow-hidden">
+      {/* Background glow orbs */}
+      <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-[#128C7E]/15 blur-[80px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full bg-[#128C7E]/10 blur-[60px] pointer-events-none" />
+
+      {/* Card grid */}
+      <div className="relative w-full max-w-sm space-y-4">
+
+        {/* Stat row */}
+        <div className="grid grid-cols-2 gap-4">
+          <FloatCard delay={0.1} className="flex flex-col gap-3">
+            <div
+              className="w-8 h-8 rounded-xl flex items-center justify-center"
+              style={{ background: "rgba(18,140,126,0.15)", boxShadow: "var(--nm-inset-sm)" }}
+            >
+              <BarChart3 className="w-4 h-4 text-[#128C7E]" />
+            </div>
+            <div>
+              <p className="font-display text-2xl font-bold text-foreground leading-none">48</p>
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mt-1">Posts</p>
+            </div>
+          </FloatCard>
+
+          <FloatCard delay={0.2} className="flex flex-col gap-3">
+            <div
+              className="w-8 h-8 rounded-xl flex items-center justify-center"
+              style={{ background: "rgba(99,102,241,0.15)", boxShadow: "var(--nm-inset-sm)" }}
+            >
+              <Users className="w-4 h-4 text-indigo-400" />
+            </div>
+            <div>
+              <p className="font-display text-2xl font-bold text-foreground leading-none">3</p>
+              <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mt-1">Profiles</p>
+            </div>
+          </FloatCard>
+        </div>
+
+        {/* Recent activity card */}
+        <FloatCard delay={0.3}>
+          <p className="text-xs font-semibold text-foreground mb-3">Recent Activity</p>
+          <div className="space-y-2.5">
+            {[
+              { label: "LinkedIn post published", time: "2m ago", ok: true },
+              { label: "X thread scheduled",      time: "1h ago", ok: true },
+              { label: "Facebook post pending",   time: "3h ago", ok: false },
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-2.5">
+                <div
+                  className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0"
+                  style={{
+                    background: item.ok ? "rgba(18,140,126,0.15)" : "rgba(245,158,11,0.15)",
+                    boxShadow: "var(--nm-inset-sm)",
+                  }}
+                >
+                  <CheckCircle className="w-3 h-3" style={{ color: item.ok ? "#128C7E" : "#F59E0B" }} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-foreground truncate">{item.label}</p>
+                </div>
+                <p className="text-[10px] font-semibold text-muted-foreground shrink-0">{item.time}</p>
+              </div>
+            ))}
+          </div>
+        </FloatCard>
+
+        {/* Calendar teaser */}
+        <FloatCard delay={0.4} className="flex items-center gap-3">
+          <div
+            className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+            style={{ background: "rgba(244,63,94,0.15)", boxShadow: "var(--nm-inset-sm)" }}
+          >
+            <Calendar className="w-5 h-5 text-rose-400" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-foreground">5 posts scheduled</p>
+            <p className="text-xs text-muted-foreground">Next 7 days</p>
+          </div>
+        </FloatCard>
+
+        {/* Tagline */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.9 }}
+          className="text-center text-xs text-muted-foreground pt-2"
+        >
+          &ldquo;The most intuitive way to orchestrate social growth.&rdquo;
+          <br />
+          <span className="font-semibold text-[#128C7E]">— Sarah Jenkins, Marketing Director</span>
+        </motion.p>
+      </div>
+    </div>
+  )
+}
+
+/* ─── Page ───────────────────────────────────────────────────── */
 export default function LoginPage() {
   const [state, formAction] = useActionState(login, null)
 
   return (
-    <div className="flex min-h-screen bg-white text-slate-900 relative overflow-hidden">
-      <div className="absolute top-[-10%] left-[-5%] w-[40%] h-[40%] rounded-full bg-[#128C7E]/10 blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-5%] w-[40%] h-[40%] rounded-full bg-teal-200/50 blur-[100px] pointer-events-none" />
+    <div className="flex min-h-screen bg-background overflow-hidden">
 
-      <div className="flex-1 flex flex-col justify-center px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24 z-10 w-full lg:w-[500px] mx-auto bg-white/80 backdrop-blur-xl border-r border-slate-100">
+      {/* ── Left: form panel ── */}
+      <div className="flex-1 lg:flex-none lg:w-[480px] flex flex-col justify-center px-8 sm:px-12 lg:px-16 py-12 relative z-10">
+
+        {/* Ambient glow */}
+        <div className="absolute top-0 left-0 w-72 h-72 rounded-full bg-[#128C7E]/8 blur-[100px] pointer-events-none" />
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="mx-auto w-full max-w-sm lg:w-[400px]"
+          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+          className="relative w-full max-w-sm mx-auto"
         >
-          <div className="flex items-center mb-10">
-            <div className="bg-[#128C7E]/10 p-2.5 rounded-xl border border-[#128C7E]/20 shadow-sm flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-[#128C7E]" />
+          {/* Logo */}
+          <div className="flex items-center gap-3 mb-10">
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center bg-[#128C7E]"
+              style={{ boxShadow: "var(--nm-raised-sm)" }}
+            >
+              <Sparkles className="w-5 h-5 text-white" />
             </div>
-            <span className="ml-3 text-xl font-bold tracking-tight text-slate-900">LinXar Ops: Social</span>
+            <span className="font-display text-lg font-bold tracking-tight text-foreground">
+              LinXar Ops: Social
+            </span>
           </div>
 
+          {/* Heading */}
           <div className="mb-8">
-            <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 mb-2">Sign in to your account</h2>
-            <p className="text-slate-500 text-sm">
-              Or{" "}
-              <Link href="/register" className="font-semibold text-[#128C7E] hover:text-[#128C7E] transition-colors">
-                start your 14-day free trial
+            <h1 className="font-display text-3xl font-bold tracking-tight text-foreground mb-2">
+              Welcome back
+            </h1>
+            <p className="text-muted-foreground text-sm">
+              Don&apos;t have an account?{" "}
+              <Link
+                href="/register"
+                className="font-semibold text-[#128C7E] hover:underline transition-colors"
+              >
+                Create one free
               </Link>
             </p>
           </div>
 
-          <form action={formAction} className="space-y-5">
-            {state?.error && (
-              <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm">
-                {state.error}
+          {/* Form card */}
+          <div
+            className="rounded-2xl p-6 bg-[var(--nm-bg)]"
+            style={{ boxShadow: "var(--nm-raised)" }}
+          >
+            <form action={formAction} className="space-y-5">
+              {state?.error && (
+                <div
+                  className="rounded-xl px-4 py-3 text-sm text-rose-400 bg-[var(--nm-bg)]"
+                  style={{ boxShadow: "var(--nm-inset-sm)" }}
+                >
+                  {state.error}
+                </div>
+              )}
+
+              {/* Email */}
+              <div className="space-y-2">
+                <label htmlFor="email" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Email address
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3.5 top-3 w-4 h-4 text-muted-foreground pointer-events-none" />
+                  <input
+                    id="email" name="email" type="email"
+                    placeholder="name@company.com" required
+                    className="w-full h-10 pl-10 pr-4 rounded-xl text-sm text-foreground bg-[var(--nm-bg)] placeholder:text-muted-foreground focus:outline-none"
+                    style={{ boxShadow: "var(--nm-inset-sm)" }}
+                  />
+                </div>
               </div>
-            )}
-            <div className="space-y-1.5">
-              <Label htmlFor="email" className="text-slate-700 font-medium">Email address</Label>
-              <Input id="email" name="email" type="email" placeholder="name@company.com" required
-                className="bg-white border-slate-200 text-slate-900 focus-visible:ring-[#128C7E] rounded-lg h-11 px-4 shadow-sm hover:border-slate-300 transition-colors" />
-            </div>
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-slate-700 font-medium">Password</Label>
-                <Link href="#" className="text-sm font-medium text-[#128C7E] hover:text-[#128C7E]">Forgot password?</Link>
+
+              {/* Password */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label htmlFor="password" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Password
+                  </label>
+                  <Link href="#" className="text-xs font-medium text-[#128C7E] hover:underline">
+                    Forgot password?
+                  </Link>
+                </div>
+                <div className="relative">
+                  <Lock className="absolute left-3.5 top-3 w-4 h-4 text-muted-foreground pointer-events-none" />
+                  <input
+                    id="password" name="password" type="password" required
+                    className="w-full h-10 pl-10 pr-4 rounded-xl text-sm text-foreground bg-[var(--nm-bg)] placeholder:text-muted-foreground focus:outline-none"
+                    style={{ boxShadow: "var(--nm-inset-sm)" }}
+                  />
+                </div>
               </div>
-              <Input id="password" name="password" type="password" required
-                className="bg-white border-slate-200 text-slate-900 focus-visible:ring-[#128C7E] rounded-lg h-11 px-4 shadow-sm hover:border-slate-300 transition-colors" />
-            </div>
-            <Button type="submit" className="w-full h-11 mt-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-medium text-base transition-all group shadow-md">
-              Sign In
-              <ArrowRight className="w-4 h-4 ml-2 opacity-70 group-hover:translate-x-1 group-hover:opacity-100 transition-all" />
-            </Button>
-          </form>
+
+              {/* Submit */}
+              <button
+                type="submit"
+                className="w-full h-11 rounded-xl text-sm font-semibold text-white bg-[#128C7E] flex items-center justify-center gap-2 group transition-all mt-2"
+                style={{ boxShadow: "var(--nm-raised-sm)" }}
+              >
+                Sign In
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              </button>
+            </form>
+          </div>
+
+          {/* Bottom register link */}
+          <p className="mt-6 text-center text-sm text-muted-foreground">
+            New to LinXar?{" "}
+            <Link href="/register" className="font-semibold text-[#128C7E] hover:underline">
+              Create your account
+            </Link>
+          </p>
         </motion.div>
       </div>
 
-      <div className="hidden lg:block relative w-full flex-1 bg-slate-50 overflow-hidden">
-        <div className="absolute inset-0 bg-slate-100/50 backdrop-blur-3xl z-0" />
-        <div className="absolute inset-0 flex items-center justify-center z-10">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="w-[80%] max-w-2xl aspect-4/3 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col"
-          >
-            <div className="h-12 border-b border-slate-100 flex items-center px-4 space-x-2 bg-slate-50/50">
-              <div className="w-3 h-3 rounded-full bg-rose-400" />
-              <div className="w-3 h-3 rounded-full bg-amber-400" />
-              <div className="w-3 h-3 rounded-full bg-emerald-400" />
-            </div>
-            <div className="flex-1 p-8 grid grid-cols-3 gap-6 bg-slate-50/30">
-              <div className="col-span-2 space-y-4">
-                <div className="h-32 bg-indigo-50 rounded-xl border border-indigo-100" />
-                <div className="h-48 bg-white rounded-xl border border-slate-100 shadow-sm" />
-              </div>
-              <div className="col-span-1 space-y-4">
-                <div className="h-20 bg-white rounded-xl border border-slate-100 shadow-sm" />
-                <div className="h-20 bg-white rounded-xl border border-slate-100 shadow-sm" />
-                <div className="h-20 bg-white rounded-xl border border-slate-100 shadow-sm" />
-              </div>
-            </div>
-          </motion.div>
-        </div>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 w-full max-w-lg"
-        >
-          <div className="p-6 bg-slate-900/90 backdrop-blur-xl border border-slate-800 rounded-2xl shadow-2xl text-center">
-            <h3 className="text-lg font-medium text-slate-50 mb-2">&quot;The most intuitive way to orchestrate social growth.&quot;</h3>
-            <p className="text-slate-400 text-sm font-medium">— Sarah Jenkins, Marketing Director</p>
-          </div>
-        </motion.div>
+      {/* ── Right: animated product illustration ── */}
+      <div className="hidden lg:block flex-1 relative overflow-hidden">
+        {/* Vertical separator */}
+        <div
+          className="absolute left-0 top-0 bottom-0 w-px"
+          style={{ background: "linear-gradient(to bottom, transparent, rgba(18,140,126,0.25), transparent)" }}
+        />
+        <ProductPreview />
       </div>
     </div>
   )
