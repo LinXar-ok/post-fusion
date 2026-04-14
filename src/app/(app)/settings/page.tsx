@@ -1,4 +1,5 @@
 import { AlertCircle, CheckCircle2, Plug } from "lucide-react"
+import { SmartQueueSection } from "@/components/settings/smart-queue-section"
 import { FaLinkedin, FaXTwitter, FaInstagram, FaFacebook } from "react-icons/fa6"
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
@@ -86,6 +87,8 @@ export default async function SettingsPage() {
       </div>
 
       <div className="flex flex-col gap-5">
+        <SmartQueueSection />
+
         {platforms.map(p => (
           <div
             key={p.id}
