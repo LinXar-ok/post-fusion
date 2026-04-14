@@ -1,10 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Card } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Search, Filter, Send, Webhook, RefreshCw } from "lucide-react"
+import { Search, Send, Webhook, RefreshCw } from "lucide-react"
 import { FaLinkedin, FaXTwitter, FaFacebook } from "react-icons/fa6"
 import {
   getInboxMessages,
@@ -19,31 +16,33 @@ const platformIcons: Record<string, React.ComponentType<{ className?: string }>>
   x: FaXTwitter,
   facebook: FaFacebook,
 }
-
 const platformColors: Record<string, string> = {
   linkedin: "text-[#0A66C2]",
-  x: "text-slate-900",
+  x: "text-foreground",
   facebook: "text-[#1877F2]",
 }
 
+type FilterValue = "all" | "unread" | "linkedin" | "x" | "facebook"
+
 export default function InboxPage() {
-  const [messages, setMessages] = useState<InboxMessage[]>([])
+  const [messages, setMessages]     = useState<InboxMessage[]>([])
   const [selectedMsg, setSelectedMsg] = useState<InboxMessage | null>(null)
-  const [filter, setFilter] = useState<"all" | "unread" | "linkedin" | "x" | "facebook">("all")
+  const [filter, setFilter]         = useState<FilterValue>("all")
   const [searchQuery, setSearchQuery] = useState("")
   const [unreadCount, setUnreadCount] = useState(0)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading]       = useState(true)
+  const [replyText, setReplyText]   = useState("")
 
   const loadMessages = async () => {
     setLoading(true)
-    const data = await getInboxMessages(filter)
-    setMessages(data)
+    const data  = await getInboxMessages(filter)
     const count = await getUnreadCount()
+    setMessages(data)
     setUnreadCount(count)
     setLoading(false)
   }
 
-  useEffect(() => { loadMessages() }, [filter])
+  useEffect(() => { loadMessages() }, [filter]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSelectMessage = async (msg: InboxMessage) => {
     setSelectedMsg(msg)
@@ -63,8 +62,7 @@ export default function InboxPage() {
   const filteredMessages = searchQuery
     ? messages.filter(m =>
         m.sender_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        m.content.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
+        m.content.toLowerCase().includes(searchQuery.toLowerCase()))
     : messages
 
   const formatTimeAgo = (dateStr: string) => {
@@ -74,173 +72,258 @@ export default function InboxPage() {
     if (mins < 60) return `${mins}m ago`
     const hours = Math.floor(mins / 60)
     if (hours < 24) return `${hours}h ago`
-    const days = Math.floor(hours / 24)
-    return `${days}d ago`
+    return `${Math.floor(hours / 24)}d ago`
   }
 
-  const FilterButton = ({ value, label }: { value: typeof filter; label: string }) => {
-    const isActive = filter === value
-    return (
-      <Button
-        variant={isActive ? "secondary" : "outline"}
-        size="sm"
-        className={`h-7 text-xs rounded-full font-bold shadow-xs shrink-0 ${
-          isActive
-            ? "bg-[#128C7E]/10 hover:bg-[#128C7E]/20 text-[#0B1020] border border-[#128C7E]/20"
-            : "bg-white hover:bg-slate-50 text-slate-600 border-slate-200"
-        }`}
-        onClick={() => setFilter(value)}
-      >
-        {label}
-      </Button>
-    )
-  }
+  const filterOptions: { value: FilterValue; label: string }[] = [
+    { value: "all",       label: `All (${messages.length})` },
+    ...(unreadCount > 0 ? [{ value: "unread" as FilterValue, label: `Unread (${unreadCount})` }] : []),
+    { value: "linkedin",  label: "LinkedIn" },
+    { value: "x",        label: "X" },
+    { value: "facebook",  label: "Facebook" },
+  ]
 
   return (
-    <div className="p-6 md:p-8 lg:p-10 max-w-7xl mx-auto w-full h-[calc(100vh-4rem)] flex flex-col relative z-10">
-      <div className="mb-6 shrink-0">
-        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-2">Unified Inbox</h1>
-        <p className="text-slate-500 text-lg">Respond to comments, mentions, and direct messages in one place.</p>
+    <div className="p-6 md:p-8 lg:p-10 max-w-7xl mx-auto w-full flex flex-col gap-6 h-[calc(100vh-4rem)]">
+
+      {/* Page header */}
+      <div className="shrink-0">
+        <h1 className="font-display text-3xl font-bold tracking-tight text-foreground mb-1">
+          Unified Inbox
+        </h1>
+        <p className="text-muted-foreground text-sm">
+          Respond to comments, mentions, and direct messages in one place.
+        </p>
       </div>
 
-      {/* Webhook setup banner */}
-      <div className="mb-4 flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800 shrink-0">
-        <Webhook className="w-5 h-5 mt-0.5 shrink-0 text-amber-600" />
+      {/* Webhook setup notice */}
+      <div
+        className="shrink-0 rounded-2xl px-5 py-4 flex items-start gap-3 bg-[var(--nm-bg)]"
+        style={{ boxShadow: "var(--nm-raised-sm)" }}
+      >
+        <div
+          className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5"
+          style={{ background: "rgba(245,158,11,0.12)", boxShadow: "var(--nm-inset-sm)" }}
+        >
+          <Webhook className="w-4 h-4 text-amber-500" />
+        </div>
         <div>
-          <span className="font-semibold">Webhook setup required</span> — To receive live messages and comments, configure the platform webhooks in your developer apps pointing to{" "}
-          <code className="text-xs bg-amber-100 px-1 py-0.5 rounded">yourdomain.com/api/webhooks/inbox?platform=PLATFORM</code>.
-          Live data will replace these preview messages once connected.
+          <p className="text-sm font-semibold text-foreground mb-0.5">Webhook setup required</p>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            To receive live messages, configure platform webhooks in your developer apps pointing to{" "}
+            <code
+              className="rounded-lg px-1.5 py-0.5 text-[#128C7E] font-mono bg-[var(--nm-bg)]"
+              style={{ boxShadow: "var(--nm-inset-sm)" }}
+            >
+              yourdomain.com/api/webhooks/inbox?platform=PLATFORM
+            </code>
+          </p>
         </div>
       </div>
 
-      <Card className="flex-1 bg-white border-slate-200 shadow-sm backdrop-blur-xl overflow-hidden flex min-h-0">
-        <div className="w-full md:w-80 border-r border-slate-100 bg-slate-50/50 flex flex-col h-full shrink-0">
-          <div className="p-4 border-b border-slate-100 bg-white">
-            <div className="flex items-center gap-2 mb-3">
+      {/* Two-pane layout */}
+      <div
+        className="flex-1 min-h-0 rounded-2xl overflow-hidden flex bg-[var(--nm-bg)]"
+        style={{ boxShadow: "var(--nm-raised)" }}
+      >
+        {/* Left pane — message list */}
+        <div className="w-full md:w-80 shrink-0 flex flex-col h-full border-r border-[rgba(163,177,198,0.15)]">
+
+          {/* Search + filters */}
+          <div className="p-4 flex flex-col gap-3 border-b border-[rgba(163,177,198,0.15)]">
+            <div className="flex items-center gap-2">
+              {/* Search input */}
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-                <Input
-                  placeholder="Search conversations..."
-                  className="pl-9 bg-slate-50 border-slate-200 shadow-xs h-9 text-sm rounded-lg focus-visible:ring-[#128C7E]"
+                <Search className="absolute left-3 top-2.5 w-4 h-4 text-muted-foreground pointer-events-none" />
+                <input
+                  type="text"
+                  placeholder="Search conversations…"
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
+                  className="w-full h-9 pl-9 pr-3 rounded-xl text-sm text-foreground bg-[var(--nm-bg)] focus:outline-none placeholder:text-muted-foreground"
+                  style={{ boxShadow: "var(--nm-inset-sm)" }}
                 />
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-9 w-9 shrink-0"
+
+              {/* Refresh */}
+              <button
+                type="button"
                 onClick={loadMessages}
                 disabled={loading}
+                className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-[var(--nm-bg)] text-muted-foreground transition-all hover:text-[#128C7E]"
+                style={{ boxShadow: "var(--nm-raised-xs)" }}
                 title="Refresh"
               >
-                <RefreshCw className={`w-4 h-4 text-slate-500 ${loading ? "animate-spin" : ""}`} />
-              </Button>
+                <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+              </button>
             </div>
+
+            {/* Filter chips */}
             <div className="flex gap-2 overflow-x-auto pb-1">
-              <FilterButton value="all" label={`All (${messages.length})`} />
-              {unreadCount > 0 && (
-                <FilterButton value="unread" label={`Unread (${unreadCount})`} />
-              )}
-              <FilterButton value="linkedin" label="LinkedIn" />
-              <FilterButton value="x" label="X" />
-              <FilterButton value="facebook" label="Facebook" />
+              {filterOptions.map(opt => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setFilter(opt.value)}
+                  className="h-7 px-3 rounded-full text-xs font-semibold shrink-0 text-foreground bg-[var(--nm-bg)] transition-all"
+                  style={{
+                    boxShadow: filter === opt.value ? "var(--nm-inset-sm)" : "var(--nm-raised-xs)",
+                    color: filter === opt.value ? "#128C7E" : undefined,
+                  }}
+                >
+                  {opt.label}
+                </button>
+              ))}
             </div>
+
+            {/* Mark all read */}
+            {unreadCount > 0 && (
+              <button
+                type="button"
+                onClick={handleMarkAllRead}
+                className="text-xs font-semibold text-[#128C7E] text-left hover:underline"
+              >
+                Mark all as read
+              </button>
+            )}
           </div>
+
+          {/* Messages */}
           <div className="overflow-y-auto flex-1">
             {filteredMessages.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center p-8">
-                <Webhook className="w-12 h-12 text-slate-300 mb-4" />
-                <p className="text-sm font-medium text-slate-500">No messages yet</p>
-                <p className="text-xs text-slate-400 mt-1">Messages will appear once webhooks are connected.</p>
+                <div
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center mb-3 bg-[var(--nm-bg)]"
+                  style={{ boxShadow: "var(--nm-inset-sm)" }}
+                >
+                  <Webhook className="w-5 h-5 text-muted-foreground" />
+                </div>
+                <p className="text-sm font-medium text-foreground">No messages yet</p>
+                <p className="text-xs text-muted-foreground mt-1">Messages will appear once webhooks are connected.</p>
               </div>
             ) : (
               filteredMessages.map(msg => {
                 const Icon = platformIcons[msg.platform] ?? FaLinkedin
+                const isSelected = selectedMsg?.id === msg.id
                 return (
-                  <div
+                  <button
                     key={msg.id}
-                    className={`p-4 border-b border-slate-100 cursor-pointer transition-colors ${
-                      !msg.is_read ? "bg-white hover:bg-slate-50" : "hover:bg-slate-100/50 opacity-80"
-                    } ${selectedMsg?.id === msg.id ? "bg-white" : ""}`}
+                    type="button"
+                    className="w-full text-left px-4 py-4 border-b border-[rgba(163,177,198,0.1)] transition-all"
+                    style={isSelected ? { boxShadow: "var(--nm-inset-sm)" } : undefined}
                     onClick={() => handleSelectMessage(msg)}
                   >
-                    <div className="flex justify-between items-start mb-1">
-                      <div className="flex items-center gap-2">
-                        <div className="font-bold text-sm text-slate-900">{msg.sender_name}</div>
-                        <Icon className={`w-3.5 h-3.5 ${platformColors[msg.platform] ?? "text-slate-400"}`} />
+                    <div className="flex items-start justify-between gap-2 mb-1.5">
+                      <div className="flex items-center gap-2 min-w-0">
+                        {!msg.is_read && (
+                          <div className="w-2 h-2 rounded-full bg-[#128C7E] shrink-0" style={{ boxShadow: "0 0 0 3px rgba(18,140,126,0.15)" }} />
+                        )}
+                        <span className={`text-sm font-semibold truncate ${msg.is_read ? "text-muted-foreground" : "text-foreground"}`}>
+                          {msg.sender_name}
+                        </span>
+                        <Icon className={`w-3.5 h-3.5 shrink-0 ${platformColors[msg.platform] ?? "text-muted-foreground"}`} />
                       </div>
-                      <span className="text-xs font-semibold text-slate-400">{formatTimeAgo(msg.created_at)}</span>
+                      <span className="text-[10px] font-semibold text-muted-foreground shrink-0 uppercase tracking-wide">
+                        {formatTimeAgo(msg.created_at)}
+                      </span>
                     </div>
+
                     {msg.sender_handle && (
-                      <p className="text-xs font-medium text-slate-500 mt-0.5 truncate">{msg.sender_handle}</p>
+                      <p className="text-xs text-muted-foreground mb-1.5 truncate">{msg.sender_handle}</p>
                     )}
-                    <p className={`text-sm mt-2 line-clamp-2 leading-relaxed ${msg.is_read ? "text-slate-500" : "text-slate-800 font-medium"}`}>
+
+                    <p className={`text-xs leading-relaxed line-clamp-2 ${msg.is_read ? "text-muted-foreground" : "text-foreground"}`}>
                       {msg.content}
                     </p>
-                    {!msg.is_read && (
-                      <div className="w-2 h-2 rounded-full bg-[#128C7E] mt-3 shadow-xs" />
-                    )}
-                  </div>
+                  </button>
                 )
               })
             )}
           </div>
         </div>
 
-        <div className="hidden md:flex flex-1 flex-col bg-white h-full relative">
+        {/* Right pane — conversation detail */}
+        <div className="hidden md:flex flex-1 flex-col h-full min-w-0">
           {selectedMsg ? (
             <>
-              <div className="h-16 border-b border-slate-100 bg-white/80 backdrop-blur-xl flex items-center px-6 shrink-0">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-600 font-bold shadow-xs">
-                    {selectedMsg.sender_name.charAt(0).toUpperCase()}
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-slate-900">{selectedMsg.sender_name}</h3>
-                    <p className="text-xs font-medium text-slate-500 flex items-center gap-1 mt-0.5">
-                      {selectedMsg.platform === "x" && <FaXTwitter className="w-3 h-3 text-slate-400" />}
-                      {selectedMsg.platform === "linkedin" && <FaLinkedin className="w-3 h-3 text-[#0A66C2]" />}
-                      {selectedMsg.platform === "facebook" && <FaFacebook className="w-3 h-3 text-[#1877F2]" />}
-                      {selectedMsg.sender_handle ?? `via ${selectedMsg.platform}`}
-                    </p>
-                  </div>
+              {/* Conversation header */}
+              <div
+                className="h-16 px-6 flex items-center gap-3 shrink-0 border-b border-[rgba(163,177,198,0.15)]"
+              >
+                <div
+                  className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-[#128C7E] bg-[var(--nm-bg)] shrink-0"
+                  style={{ boxShadow: "var(--nm-inset-sm)", background: "rgba(18,140,126,0.1)" }}
+                >
+                  {selectedMsg.sender_name.charAt(0).toUpperCase()}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-foreground leading-none mb-1">
+                    {selectedMsg.sender_name}
+                  </p>
+                  <p className="text-xs text-muted-foreground flex items-center gap-1">
+                    {selectedMsg.platform === "linkedin"  && <FaLinkedin  className="w-3 h-3 text-[#0A66C2]"  />}
+                    {selectedMsg.platform === "x"         && <FaXTwitter  className="w-3 h-3 text-foreground" />}
+                    {selectedMsg.platform === "facebook"  && <FaFacebook  className="w-3 h-3 text-[#1877F2]"  />}
+                    {selectedMsg.sender_handle ?? `via ${selectedMsg.platform}`}
+                  </p>
                 </div>
               </div>
-              <div className="flex-1 overflow-y-auto p-6 bg-slate-50/30">
-                <div className="flex flex-col space-y-6">
-                  <div className="flex justify-center">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400 bg-white px-3 py-1 rounded-full border border-slate-200 shadow-xs">
-                      {formatTimeAgo(selectedMsg.created_at)}
-                    </span>
-                  </div>
-                  <div className="bg-white p-4 rounded-2xl rounded-tl-sm border border-slate-200 shadow-sm max-w-lg self-start">
-                    <p className="text-slate-700 text-[15px] leading-relaxed">{selectedMsg.content}</p>
-                  </div>
+
+              {/* Message body */}
+              <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6">
+                <div className="flex justify-center">
+                  <span
+                    className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground px-3 py-1 rounded-full bg-[var(--nm-bg)]"
+                    style={{ boxShadow: "var(--nm-inset-sm)" }}
+                  >
+                    {formatTimeAgo(selectedMsg.created_at)}
+                  </span>
+                </div>
+
+                <div
+                  className="self-start max-w-lg rounded-2xl rounded-tl-sm px-5 py-4 bg-[var(--nm-bg)]"
+                  style={{ boxShadow: "var(--nm-raised)" }}
+                >
+                  <p className="text-sm text-foreground leading-relaxed">{selectedMsg.content}</p>
                 </div>
               </div>
-              <div className="p-4 border-t border-slate-100 bg-white shrink-0">
+
+              {/* Reply input */}
+              <div className="p-4 shrink-0 border-t border-[rgba(163,177,198,0.15)]">
                 <div className="relative flex items-center">
-                  <Input
-                    placeholder={`Type your reply to ${selectedMsg.sender_name.split(" ")[0]}...`}
-                    className="flex-1 pr-12 bg-slate-50 border-slate-200 text-slate-900 h-12 rounded-xl shadow-inner focus-visible:ring-[#128C7E]"
+                  <input
+                    type="text"
+                    placeholder={`Reply to ${selectedMsg.sender_name.split(" ")[0]}…`}
+                    value={replyText}
+                    onChange={e => setReplyText(e.target.value)}
+                    className="w-full h-12 px-4 pr-14 rounded-xl text-sm text-foreground bg-[var(--nm-bg)] focus:outline-none placeholder:text-muted-foreground"
+                    style={{ boxShadow: "var(--nm-inset-sm)" }}
                   />
-                  <Button
-                    size="icon"
-                    className="absolute right-1.5 h-9 w-9 rounded-lg bg-[#128C7E] hover:bg-[#0B1020] shadow-sm text-white transition-transform hover:scale-105"
+                  <button
+                    type="button"
+                    disabled={!replyText.trim()}
+                    className="absolute right-1.5 w-9 h-9 rounded-xl flex items-center justify-center bg-[#128C7E] text-white transition-all disabled:opacity-40"
+                    style={{ boxShadow: "var(--nm-raised-sm)" }}
                   >
                     <Send className="w-4 h-4 ml-0.5" />
-                  </Button>
+                  </button>
                 </div>
               </div>
             </>
           ) : (
             <div className="flex flex-col items-center justify-center h-full text-center p-8">
-              <p className="text-sm font-medium text-slate-400">Select a conversation to view details</p>
+              <div
+                className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4 bg-[var(--nm-bg)]"
+                style={{ boxShadow: "var(--nm-inset-sm)" }}
+              >
+                <Send className="w-6 h-6 text-muted-foreground" />
+              </div>
+              <p className="text-sm font-medium text-foreground mb-1">No conversation selected</p>
+              <p className="text-xs text-muted-foreground">Pick a message from the list to view the thread.</p>
             </div>
           )}
         </div>
-      </Card>
+      </div>
     </div>
   )
 }

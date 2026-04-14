@@ -1,7 +1,5 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { AlertCircle, CheckCircle2 } from "lucide-react"
-import { FaLinkedin, FaXTwitter, FaInstagram } from "react-icons/fa6"
+import { AlertCircle, CheckCircle2, Plug } from "lucide-react"
+import { FaLinkedin, FaXTwitter, FaInstagram, FaFacebook } from "react-icons/fa6"
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 
@@ -17,143 +15,149 @@ export default async function SettingsPage() {
     .eq("user_id", user.id)
 
   const isLinkedInConnected = profiles?.some(p => p.platform === "linkedin")
-  const linkedInProfile = profiles?.find(p => p.platform === "linkedin")
-  const isXConnected = profiles?.some(p => p.platform === "x")
-  const xProfile = profiles?.find(p => p.platform === "x")
+  const linkedInProfile    = profiles?.find(p => p.platform === "linkedin")
+  const isXConnected       = profiles?.some(p => p.platform === "x")
+  const xProfile           = profiles?.find(p => p.platform === "x")
   const isFacebookConnected = profiles?.some(p => p.platform === "facebook")
-  const facebookProfile = profiles?.find(p => p.platform === "facebook")
+  const facebookProfile    = profiles?.find(p => p.platform === "facebook")
+
+  const platforms = [
+    {
+      id: "linkedin",
+      label: "LinkedIn",
+      description: "Post updates and articles to your LinkedIn personal profile or company page.",
+      icon: <FaLinkedin className="w-5 h-5 text-[#0A66C2]" />,
+      accentBg: "rgba(10,102,194,0.1)",
+      accentColor: "#0A66C2",
+      isConnected: isLinkedInConnected,
+      profileName: isLinkedInConnected ? linkedInProfile?.profile_name : null,
+      action: "/api/auth/linkedin",
+      reconnectLabel: "Reconnect LinkedIn",
+      connectLabel: "Connect LinkedIn",
+    },
+    {
+      id: "x",
+      label: "X (Twitter)",
+      description: "Schedule tweets, threads, and engage with your X audience programmatically.",
+      icon: <FaXTwitter className="w-5 h-5 text-foreground" />,
+      accentBg: "rgba(15,20,25,0.1)",
+      accentColor: "var(--foreground)",
+      isConnected: isXConnected,
+      profileName: isXConnected ? `@${xProfile?.profile_name}` : null,
+      action: "/api/auth/x",
+      reconnectLabel: "Reconnect X",
+      connectLabel: "Connect X",
+    },
+    {
+      id: "facebook",
+      label: "Meta (Facebook & Instagram)",
+      description: "Publish reels, posts, and stories to your Business Instagram and Facebook Pages.",
+      icon: (
+        <div className="flex -space-x-1">
+          <div className="bg-[#1877F2] text-white p-1 rounded-full z-10 ring-2 ring-[var(--nm-bg)]">
+            <FaFacebook className="w-3 h-3" />
+          </div>
+          <div className="bg-gradient-to-tr from-yellow-400 via-rose-500 to-purple-600 text-white p-1 rounded-full z-0 ring-2 ring-[var(--nm-bg)]">
+            <FaInstagram className="w-3 h-3" />
+          </div>
+        </div>
+      ),
+      accentBg: "rgba(24,119,242,0.1)",
+      accentColor: "#1877F2",
+      isConnected: isFacebookConnected,
+      profileName: isFacebookConnected ? facebookProfile?.profile_name : null,
+      action: "/api/auth/facebook",
+      reconnectLabel: "Reconnect Meta",
+      connectLabel: "Connect Meta",
+    },
+  ]
 
   return (
-    <div className="p-6 md:p-8 lg:p-10 max-w-5xl mx-auto w-full relative z-10">
+    <div className="p-6 md:p-8 lg:p-10 max-w-4xl mx-auto w-full">
+
+      {/* Page header */}
       <div className="mb-10">
-        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-2">Integrations</h1>
-        <p className="text-slate-500 text-lg">Connect your social media profiles to start publishing.</p>
+        <h1 className="font-display text-3xl font-bold tracking-tight text-foreground mb-1">
+          Integrations
+        </h1>
+        <p className="text-muted-foreground text-sm">
+          Connect your social media profiles to start publishing.
+        </p>
       </div>
 
-      <div className="grid gap-6">
-        <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-xl overflow-hidden hover:shadow-md transition-shadow">
-          <CardHeader className="flex flex-row items-start justify-between pb-2 bg-slate-50 border-b border-slate-100">
-            <div>
-              <CardTitle className="text-xl flex items-center gap-2 text-slate-900">
-                <FaLinkedin className="w-5 h-5 text-[#0A66C2]" />
-                LinkedIn
-              </CardTitle>
-              <CardDescription className="mt-1.5 text-sm text-slate-500 max-w-md">
-                Post updates and articles directly to your LinkedIn personal profile or company page.
-              </CardDescription>
-            </div>
-            {isLinkedInConnected ? (
-              <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-xs font-bold shadow-xs">
-                <CheckCircle2 className="w-3.5 h-3.5" /> Connected
-              </div>
-            ) : (
-              <div className="flex items-center gap-1.5 px-3 py-1 bg-white text-slate-500 border border-slate-200 rounded-full text-xs font-semibold shadow-xs">
-                <AlertCircle className="w-3.5 h-3.5" /> Not Connected
-              </div>
-            )}
-          </CardHeader>
-          <CardContent className="pt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <p className="text-sm font-semibold text-slate-800">Connection Status</p>
-              <p className="text-sm text-slate-500">
-                {isLinkedInConnected
-                  ? <span className="text-emerald-600 font-medium">Linked as {linkedInProfile?.profile_name}</span>
-                  : "No profile currently linked to this app."}
-              </p>
-            </div>
-            <form action="/api/auth/linkedin" method="GET">
-              <Button type="submit" variant={isLinkedInConnected ? "outline" : "default"}
-                className={isLinkedInConnected ? "border-slate-200 text-slate-700 bg-white hover:bg-slate-50 hover:text-[#0A66C2] font-semibold" : "bg-[#0A66C2] hover:bg-[#004182] text-white shadow-sm transition-all w-full sm:w-auto font-medium"}>
-                {isLinkedInConnected ? "Reconnect LinkedIn" : "Connect LinkedIn"}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-xl overflow-hidden hover:shadow-md transition-shadow">
-          <CardHeader className="flex flex-row items-start justify-between pb-2 bg-slate-50 border-b border-slate-100">
-            <div>
-              <CardTitle className="text-xl flex items-center gap-2 text-slate-900">
-                <FaXTwitter className="w-5 h-5 text-slate-900" />
-                X (Twitter)
-              </CardTitle>
-              <CardDescription className="mt-1.5 text-sm text-slate-500 max-w-md">
-                Schedule tweets, threads, and engage with your X audience programmatically.
-              </CardDescription>
-            </div>
-            {isXConnected ? (
-              <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-xs font-bold shadow-xs">
-                <CheckCircle2 className="w-3.5 h-3.5" /> Connected
-              </div>
-            ) : (
-              <div className="flex items-center gap-1.5 px-3 py-1 bg-white text-slate-500 border border-slate-200 rounded-full text-xs font-semibold shadow-xs">
-                <AlertCircle className="w-3.5 h-3.5" /> Not Connected
-              </div>
-            )}
-          </CardHeader>
-          <CardContent className="pt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <p className="text-sm font-semibold text-slate-800">Connection Status</p>
-              <p className="text-sm text-slate-500">
-                {isXConnected
-                  ? <span className="text-emerald-600 font-medium">Linked as @{xProfile?.profile_name}</span>
-                  : "No profile currently linked to this app."}
-              </p>
-            </div>
-            <form action="/api/auth/x" method="GET">
-              <Button type="submit" variant={isXConnected ? "outline" : "default"}
-                className={isXConnected ? "border-slate-200 text-slate-700 bg-white hover:bg-slate-50 hover:text-slate-900 font-semibold" : "bg-slate-900 hover:bg-slate-800 text-white shadow-sm transition-all w-full sm:w-auto font-medium"}>
-                {isXConnected ? "Reconnect X Network" : "Connect X Network"}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-xl overflow-hidden hover:shadow-md transition-shadow">
-          <CardHeader className="flex flex-row items-start justify-between pb-2 bg-slate-50 border-b border-slate-100">
-            <div>
-              <CardTitle className="text-xl flex items-center gap-2 text-slate-900">
-                <div className="flex -space-x-1">
-                  <div className="bg-[#1877F2] text-white p-1 rounded-full z-10 ring-2 ring-white">
-                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                  </div>
-                  <div className="bg-gradient-to-tr from-yellow-400 via-rose-500 to-purple-600 text-white p-1 rounded-full z-0 ring-2 ring-white">
-                    <FaInstagram className="w-3 h-3" />
-                  </div>
+      <div className="flex flex-col gap-5">
+        {platforms.map(p => (
+          <div
+            key={p.id}
+            className="rounded-2xl bg-[var(--nm-bg)] overflow-hidden"
+            style={{ boxShadow: "var(--nm-raised)" }}
+          >
+            {/* Card header */}
+            <div className="px-6 pt-6 pb-5 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+              <div className="flex items-start gap-4">
+                {/* Icon badge */}
+                <div
+                  className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 bg-[var(--nm-bg)]"
+                  style={{ boxShadow: "var(--nm-inset-sm)", background: p.accentBg }}
+                >
+                  {p.icon}
                 </div>
-                Meta (Facebook & Instagram)
-              </CardTitle>
-              <CardDescription className="mt-1.5 text-sm text-slate-500 max-w-md">
-                Publish reels, posts, and stories to your Business Instagram and Facebook Pages.
-              </CardDescription>
-            </div>
-            {isFacebookConnected ? (
-              <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-xs font-bold shadow-xs">
-                <CheckCircle2 className="w-3.5 h-3.5" /> Connected
+
+                <div>
+                  <h2 className="font-display text-base font-semibold text-foreground mb-1">
+                    {p.label}
+                  </h2>
+                  <p className="text-xs text-muted-foreground max-w-sm leading-relaxed">
+                    {p.description}
+                  </p>
+                </div>
               </div>
-            ) : (
-              <div className="flex items-center gap-1.5 px-3 py-1 bg-white text-slate-500 border border-slate-200 rounded-full text-xs font-semibold shadow-xs">
-                <AlertCircle className="w-3.5 h-3.5" /> Not Connected
+
+              {/* Status badge */}
+              <div
+                className="shrink-0 self-start flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--nm-bg)]"
+                style={{
+                  boxShadow: "var(--nm-inset-sm)",
+                  color: p.isConnected ? "#10B981" : "var(--muted-foreground)",
+                }}
+              >
+                {p.isConnected
+                  ? <CheckCircle2 className="w-3.5 h-3.5" />
+                  : <AlertCircle className="w-3.5 h-3.5" />}
+                {p.isConnected ? "Connected" : "Not Connected"}
               </div>
-            )}
-          </CardHeader>
-          <CardContent className="pt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <p className="text-sm font-semibold text-slate-800">Connection Status</p>
-              <p className="text-sm text-slate-500">
-                {isFacebookConnected
-                  ? <span className="text-emerald-600 font-medium">Linked as {facebookProfile?.profile_name}</span>
-                  : "No profile currently linked to this app."}
-              </p>
             </div>
-            <form action="/api/auth/facebook" method="GET">
-              <Button type="submit" variant={isFacebookConnected ? "outline" : "default"}
-                className={isFacebookConnected ? "border-slate-200 text-slate-700 bg-white hover:bg-slate-50 hover:text-[#1877F2] font-semibold" : "bg-[#1877F2] hover:bg-[#0c59bb] text-white shadow-sm transition-all w-full sm:w-auto font-medium"}>
-                {isFacebookConnected ? "Reconnect Meta" : "Connect Meta"}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+
+            {/* Divider */}
+            <div
+              className="mx-6 h-px"
+              style={{ background: "linear-gradient(to right, transparent, rgba(18,140,126,0.2), transparent)" }}
+            />
+
+            {/* Card footer */}
+            <div className="px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold text-foreground mb-0.5">Connection Status</p>
+                <p className="text-xs text-muted-foreground">
+                  {p.isConnected
+                    ? <span style={{ color: "#10B981" }} className="font-medium">Linked as {p.profileName}</span>
+                    : "No profile currently linked to this app."}
+                </p>
+              </div>
+
+              <form action={p.action} method="GET">
+                <button
+                  type="submit"
+                  className="h-9 px-5 rounded-xl text-sm font-semibold flex items-center gap-2 bg-[var(--nm-bg)] text-foreground transition-all hover:text-[#128C7E]"
+                  style={{ boxShadow: "var(--nm-raised-sm)" }}
+                >
+                  <Plug className="w-3.5 h-3.5 text-[#128C7E]" />
+                  {p.isConnected ? p.reconnectLabel : p.connectLabel}
+                </button>
+              </form>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )
