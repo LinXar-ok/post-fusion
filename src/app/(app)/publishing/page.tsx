@@ -60,6 +60,9 @@ export default function PublishingPage() {
   const [pillars, setPillars] = useState<{ id: string; name: string; emoji: string; color: string }[]>([])
   const [selectedPillar, setSelectedPillar] = useState<string>('')
 
+  const [abMode, setAbMode] = useState(false)
+  const [contentB, setContentB] = useState('')
+
   const [voiceScore, setVoiceScore] = useState<{ score: number | null; traits: string[]; flags: string[] } | null>(null)
   const [voiceLoading, setVoiceLoading] = useState(false)
   const voiceDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -227,15 +230,49 @@ export default function PublishingPage() {
       const warnings = data.results?.flatMap((r: { warnings?: string[] }) => r.warnings || []) || []
       const hasImageWarning = warnings.some((w: string) => w.toLowerCase().includes("image"))
 
+      // A/B test: create variant B and link the test
+      const postAId: string | null = data.post?.id ?? null
+      if (abMode && contentB.trim() && postAId) {
+        const { data: { user: abUser } } = await supabase.auth.getUser()
+        if (abUser) {
+          const scheduledB = payload.scheduled_for
+            ? new Date(new Date(payload.scheduled_for).getTime() + 6 * 60 * 60 * 1000).toISOString()
+            : new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString()
+
+          const { data: postB } = await supabase
+            .from('posts')
+            .insert({
+              user_id: abUser.id,
+              content: contentB.trim(),
+              platforms: selectedPlatforms,
+              status: 'scheduled',
+              scheduled_for: scheduledB,
+              media_urls: mediaUrl ? [mediaUrl] : null,
+            })
+            .select('id')
+            .single()
+
+          if (postB) {
+            await fetch('/api/ab-tests', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ post_a_id: postAId, post_b_id: postB.id }),
+            })
+          }
+        }
+      }
+
       setStatus("success")
       let msg = data.message || (payload.scheduled_for ? "Successfully scheduled!" : "Published to all selected platforms!")
       if (hasImageWarning) msg += " Note: Image could not be attached."
+      if (abMode && contentB.trim()) msg += " A/B test created."
       setFeedbackMsg(msg)
 
       setContent(""); setMediaFile(null); setMediaPreview(null); setMediaUrl(null)
       setHashtagsInput(""); setEmotion(""); setScheduledFor(""); setSelectedPillar("")
       setShowSchedule(false); setShowMetadata(false); setShowBulk(false)
       setAiResult(""); setAiType(null)
+      setAbMode(false); setContentB("")
       setCsvRaw(null); setCsvParsed([]); setCsvState("idle")
     } catch (err: unknown) {
       setStatus("error")
@@ -383,6 +420,19 @@ export default function PublishingPage() {
                 onChange={e => setContent(e.target.value)}
                 disabled={status === "loading"}
               />
+
+              {abMode && (
+                <div className="space-y-1.5">
+                  <p className="text-xs text-slate-400">Variant B — scheduled 6 hours after Variant A</p>
+                  <textarea
+                    value={contentB}
+                    onChange={e => setContentB(e.target.value)}
+                    rows={4}
+                    placeholder="Write your second caption variant here…"
+                    className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-sm text-foreground placeholder:text-slate-600 resize-none focus:outline-none focus:border-[#128C7E]"
+                  />
+                </div>
+              )}
 
               <VoiceScoreMeter
                 score={voiceScore?.score ?? null}
@@ -645,6 +695,17 @@ export default function PublishingPage() {
                   >
                     <FileText className="w-3.5 h-3.5" />
                     Bulk CSV
+                  </button>
+
+                  {/* A/B Test toggle */}
+                  <button
+                    type="button"
+                    onClick={() => setAbMode(ab => !ab)}
+                    className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors ${
+                      abMode ? 'border-[#128C7E] text-[#128C7E] bg-[#128C7E]/10' : 'border-white/10 text-slate-400 hover:border-white/20'
+                    }`}
+                  >
+                    <span>⚗</span> A/B Test
                   </button>
                 </div>
 
