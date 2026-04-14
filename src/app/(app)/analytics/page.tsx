@@ -68,10 +68,10 @@ function NmTooltip({ active, payload, label }: {
 }
 
 const statMeta = [
-  { color: "#2E5E99", bg: "rgba(46,94,153,0.12)"  },
-  { color: "#10B981", bg: "rgba(16,185,129,0.12)"  },
-  { color: "#F59E0B", bg: "rgba(245,158,11,0.12)"  },
-  { color: "#F43F5E", bg: "rgba(244,63,94,0.12)"   },
+  { color: "#2E5E99", bg: "rgba(46,94,153,0.12)"   },  // Total     — primary blue
+  { color: "#7BA4D0", bg: "rgba(123,164,208,0.12)" },  // Published — mid blue
+  { color: "#675B47", bg: "rgba(103,91,71,0.12)"   },  // Scheduled — bronze
+  { color: "#F43F5E", bg: "rgba(244,63,94,0.12)"   },  // Failed    — red (semantic error)
 ]
 
 export default function AnalyticsPage() {
@@ -280,7 +280,7 @@ export default function AnalyticsPage() {
                 {stat.title}
               </p>
               <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
-                <TrendingUp className="w-3 h-3 text-[#10B981]" />
+                <TrendingUp className="w-3 h-3 text-[#7BA4D0]" />
                 All time
               </p>
             </div>

@@ -27,7 +27,7 @@ function NmTooltip({ active, payload, label }: { active?: boolean; payload?: { v
     <div className="px-3 py-2 rounded-xl bg-[var(--nm-bg)] text-xs font-semibold" style={{ boxShadow: "var(--nm-raised-sm)" }}>
       <p className="text-muted-foreground mb-1">{label}</p>
       {payload.map(p => (
-        <p key={p.name} style={{ color: p.name === "positive" ? "#10B981" : p.name === "negative" ? "#F43F5E" : "#F59E0B" }}>
+        <p key={p.name} style={{ color: p.name === "positive" ? "#7BA4D0" : p.name === "negative" ? "#363630" : "#675B47" }}>
           {p.name}: {p.value}
         </p>
       ))}
@@ -44,9 +44,9 @@ function XIcon(props: { className?: string }) {
 }
 
 const sentimentMeta = {
-  positive: { color: "#10B981", bg: "rgba(16,185,129,0.12)", label: "Positive", Icon: ThumbsUp },
-  neutral:  { color: "#F59E0B", bg: "rgba(245,158,11,0.12)",  label: "Neutral",  Icon: Minus    },
-  negative: { color: "#F43F5E", bg: "rgba(244,63,94,0.12)",   label: "Negative", Icon: ThumbsDown },
+  positive: { color: "#7BA4D0", bg: "rgba(123,164,208,0.12)", label: "Positive", Icon: ThumbsUp   },  // mid blue
+  neutral:  { color: "#675B47", bg: "rgba(103,91,71,0.12)",   label: "Neutral",  Icon: Minus      },  // bronze
+  negative: { color: "#363630", bg: "rgba(54,54,48,0.12)",    label: "Negative", Icon: ThumbsDown },  // olive
 }
 
 export default function ListeningPage() {
@@ -150,9 +150,9 @@ export default function ListeningPage() {
         >
           <div
             className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
-            style={{ background: "rgba(244,63,94,0.12)", boxShadow: "var(--nm-inset-sm)" }}
+            style={{ background: "rgba(54,54,48,0.12)", boxShadow: "var(--nm-inset-sm)" }}
           >
-            <AlertTriangle className="w-4 h-4 text-[#F43F5E]" />
+            <AlertTriangle className="w-4 h-4 text-[#363630]" />
           </div>
           <div>
             <span className="text-sm font-semibold text-foreground">Negative sentiment spike detected</span>
@@ -262,7 +262,7 @@ export default function ListeningPage() {
                     <button
                       type="button"
                       onClick={() => removeKeyword(kw.id)}
-                      className="ml-1 text-muted-foreground hover:text-[#F43F5E] transition-colors"
+                      className="ml-1 text-muted-foreground hover:text-[#363630] transition-colors"
                     >
                       <XIcon className="w-3 h-3" />
                     </button>
@@ -336,9 +336,9 @@ export default function ListeningPage() {
                     <YAxis {...axisProps} allowDecimals={false} />
                     <Tooltip content={<NmTooltip />} />
                     <Legend wrapperStyle={{ fontSize: "11px" }} />
-                    <Area type="monotone" dataKey="positive" stackId="1" stroke="#10B981" fill="#10B981" fillOpacity={0.25} />
-                    <Area type="monotone" dataKey="neutral"  stackId="1" stroke="#F59E0B" fill="#F59E0B" fillOpacity={0.25} />
-                    <Area type="monotone" dataKey="negative" stackId="1" stroke="#F43F5E" fill="#F43F5E" fillOpacity={0.25} />
+                    <Area type="monotone" dataKey="positive" stackId="1" stroke="#7BA4D0" fill="#7BA4D0" fillOpacity={0.25} />
+                    <Area type="monotone" dataKey="neutral"  stackId="1" stroke="#675B47" fill="#675B47" fillOpacity={0.25} />
+                    <Area type="monotone" dataKey="negative" stackId="1" stroke="#363630" fill="#363630" fillOpacity={0.25} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>

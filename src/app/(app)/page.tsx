@@ -31,10 +31,10 @@ const staggerItem: Variants = {
 }
 
 const statMeta = [
-  { color: "#2E5E99", bg: "rgba(46,94,153,0.12)" },
-  { color: "#F59E0B", bg: "rgba(245,158,11,0.12)" },
-  { color: "#6366F1", bg: "rgba(99,102,241,0.12)" },
-  { color: "#F43F5E", bg: "rgba(244,63,94,0.12)" },
+  { color: "#2E5E99", bg: "rgba(46,94,153,0.12)"   },  // Published   — primary blue
+  { color: "#675B47", bg: "rgba(103,91,71,0.12)"   },  // Scheduled   — bronze
+  { color: "#7BA4D0", bg: "rgba(123,164,208,0.12)" },  // Total       — mid blue
+  { color: "#363630", bg: "rgba(54,54,48,0.12)"    },  // Profiles    — dark olive
 ]
 
 const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]

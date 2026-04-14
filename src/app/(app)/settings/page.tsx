@@ -118,7 +118,7 @@ export default async function SettingsPage() {
                 className="shrink-0 self-start flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--nm-bg)]"
                 style={{
                   boxShadow: "var(--nm-inset-sm)",
-                  color: p.isConnected ? "#10B981" : "var(--muted-foreground)",
+                  color: p.isConnected ? "#7BA4D0" : "var(--muted-foreground)",
                 }}
               >
                 {p.isConnected
@@ -140,7 +140,7 @@ export default async function SettingsPage() {
                 <p className="text-xs font-semibold text-foreground mb-0.5">Connection Status</p>
                 <p className="text-xs text-muted-foreground">
                   {p.isConnected
-                    ? <span style={{ color: "#10B981" }} className="font-medium">Linked as {p.profileName}</span>
+                    ? <span style={{ color: "#7BA4D0" }} className="font-medium">Linked as {p.profileName}</span>
                     : "No profile currently linked to this app."}
                 </p>
               </div>

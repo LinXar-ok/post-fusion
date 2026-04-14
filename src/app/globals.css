@@ -50,11 +50,25 @@
 }
 
 /* ─────────────────────────────────────────────────────────────
-   LIGHT MODE — Blue-tinted neumorphic surface
-   Base: #E7F0FA  Shadow dark: blue-tinted  Shadow light: white
+   BRAND PALETTE
+   Cool  : #E7F0FA (lightest) · #7BA4D0 (mid) · #2E5E99 (primary) · #0D2440 (deep)
+   Warm  : #675B47 (bronze)   · #363630 (dark olive)
+   Aesthetic: Maritime Craft — deep-water blue anchored by weathered bronze
+   ───────────────────────────────────────────────────────────── */
+
+/* ─────────────────────────────────────────────────────────────
+   LIGHT MODE — Blue-tinted neumorphic surface (#E7F0FA base)
    ───────────────────────────────────────────────────────────── */
 :root {
-  /* Neumorphic shadow tokens — blue-tinted for the new palette */
+  /* Brand tokens — available globally */
+  --brand-blue:   #2E5E99;
+  --brand-light:  #E7F0FA;
+  --brand-mid:    #7BA4D0;
+  --brand-dark:   #0D2440;
+  --brand-bronze: #675B47;
+  --brand-olive:  #363630;
+
+  /* Neumorphic shadows — blue-tinted dark + bright white highlight */
   --nm-bg: #E7F0FA;
   --nm-raised:    6px 6px 14px rgba(46, 94, 153, 0.22), -6px -6px 14px rgba(255, 255, 255, 0.90);
   --nm-raised-sm: 3px 3px  8px rgba(46, 94, 153, 0.18), -3px -3px  8px rgba(255, 255, 255, 0.85);
@@ -62,10 +76,6 @@
   --nm-inset:     inset 4px 4px 10px rgba(46, 94, 153, 0.20), inset -4px -4px 10px rgba(255, 255, 255, 0.85);
   --nm-inset-sm:  inset 2px 2px  6px rgba(46, 94, 153, 0.17), inset -2px -2px  6px rgba(255, 255, 255, 0.80);
   --nm-teal-glow: 0 0 0 2px rgba(46, 94, 153, 0.30);
-
-  /* Brand */
-  --brand: #2E5E99;
-  --navy: #0D2440;
 
   /* shadcn tokens */
   --background:            oklch(0.948 0.020 234);   /* #E7F0FA */
@@ -79,18 +89,19 @@
   --secondary:             oklch(0.900 0.025 234);
   --secondary-foreground:  oklch(0.145 0.062 252);
   --muted:                 oklch(0.910 0.022 234);
-  --muted-foreground:      oklch(0.480 0.055 248);   /* #4A6E95 */
+  --muted-foreground:      oklch(0.480 0.055 248);   /* mid blue-slate */
   --accent:                oklch(0.900 0.025 234);
   --accent-foreground:     oklch(0.145 0.062 252);
   --destructive:           oklch(0.577 0.245 27.325);
   --border:                oklch(0.880 0.030 234);
   --input:                 oklch(0.880 0.030 234);
   --ring:                  oklch(0.410 0.130 252);
-  --chart-1:               oklch(0.410 0.130 252);   /* #2E5E99 */
-  --chart-2:               oklch(0.590 0.095 232);   /* #7BA4D0 */
-  --chart-3:               oklch(0.650 0.120 150);
-  --chart-4:               oklch(0.700 0.100 90);
-  --chart-5:               oklch(0.600 0.130 30);
+  /* Charts: full brand palette in order */
+  --chart-1:               oklch(0.410 0.130 252);   /* #2E5E99 blue */
+  --chart-2:               oklch(0.590 0.095 232);   /* #7BA4D0 mid blue */
+  --chart-3:               oklch(0.440 0.060 68);    /* #675B47 bronze */
+  --chart-4:               oklch(0.260 0.020 90);    /* #363630 olive */
+  --chart-5:               oklch(0.145 0.062 252);   /* #0D2440 deep */
   --radius: 0.75rem;
   --sidebar:               oklch(0.948 0.020 234);
   --sidebar-foreground:    oklch(0.145 0.062 252);
@@ -103,28 +114,39 @@
 }
 
 /* ─────────────────────────────────────────────────────────────
-   DARK MODE — Single-layer deep navy (old approach preserved)
-   nm-bg = background so depth comes entirely from shadow contrast.
-   Surface: #1A3154  Shadow dark: 0.55  Shadow light: 0.055
+   DARK MODE — Single-layer deep navy, warm-accented shadows
+   nm-bg (#1A3154) = background. Dark shadow warm-tinted with
+   olive undertone; highlight carries faint blue-bronze warmth.
    ───────────────────────────────────────────────────────────── */
 .dark {
-  /* Surface — derived from #0D2440, stepped up for shadow visibility */
+  /* Brand tokens (same values, available in dark context) */
+  --brand-blue:   #2E5E99;
+  --brand-light:  #E7F0FA;
+  --brand-mid:    #7BA4D0;
+  --brand-dark:   #0D2440;
+  --brand-bronze: #675B47;
+  --brand-olive:  #363630;
+
+  /* Surface: medium-dark navy derived from #0D2440 */
   --nm-bg: #1A3154;
-  --nm-raised:    6px 6px 14px rgba(0, 0, 0, 0.55), -6px -6px 14px rgba(255, 255, 255, 0.055);
-  --nm-raised-sm: 3px 3px  8px rgba(0, 0, 0, 0.50), -3px -3px  8px rgba(255, 255, 255, 0.048);
-  --nm-raised-xs: 2px 2px  5px rgba(0, 0, 0, 0.45), -2px -2px  5px rgba(255, 255, 255, 0.040);
-  --nm-inset:     inset 4px 4px 10px rgba(0, 0, 0, 0.52), inset -4px -4px 10px rgba(255, 255, 255, 0.050);
-  --nm-inset-sm:  inset 2px 2px  6px rgba(0, 0, 0, 0.48), inset -2px -2px  6px rgba(255, 255, 255, 0.044);
+
+  /* Shadows: dark side carries subtle olive warmth (#363630 tint);
+     highlight carries a faint bronze warmth — breaks the pure blue monotony */
+  --nm-raised:    6px 6px 14px rgba(13, 18, 14, 0.70), -6px -6px 14px rgba(123, 164, 208, 0.06);
+  --nm-raised-sm: 3px 3px  8px rgba(13, 18, 14, 0.62), -3px -3px  8px rgba(123, 164, 208, 0.05);
+  --nm-raised-xs: 2px 2px  5px rgba(13, 18, 14, 0.52), -2px -2px  5px rgba(123, 164, 208, 0.04);
+  --nm-inset:     inset 4px 4px 10px rgba(13, 18, 14, 0.65), inset -4px -4px 10px rgba(123, 164, 208, 0.055);
+  --nm-inset-sm:  inset 2px 2px  6px rgba(13, 18, 14, 0.58), inset -2px -2px  6px rgba(123, 164, 208, 0.048);
   --nm-teal-glow: 0 0 0 2px rgba(46, 94, 153, 0.40);
 
-  /* background = nm-bg (single-layer — old approach) */
+  /* background = nm-bg (single-layer) */
   --background:            oklch(0.218 0.072 252);   /* #1A3154 */
   --foreground:            oklch(0.916 0.022 232);   /* #D4E5F5 */
   --card:                  oklch(0.218 0.072 252);
   --card-foreground:       oklch(0.916 0.022 232);
   --popover:               oklch(0.250 0.076 252);
   --popover-foreground:    oklch(0.916 0.022 232);
-  --primary:               oklch(0.580 0.130 252);   /* lighter #2E5E99 in dark */
+  --primary:               oklch(0.580 0.130 252);   /* #2E5E99 brightened for dark */
   --primary-foreground:    oklch(0.985 0 0);
   --secondary:             oklch(0.250 0.076 252);
   --secondary-foreground:  oklch(0.916 0.022 232);
@@ -136,11 +158,12 @@
   --border:                oklch(1 0 0 / 8%);
   --input:                 oklch(1 0 0 / 10%);
   --ring:                  oklch(0.580 0.130 252);
-  --chart-1:               oklch(0.580 0.130 252);
-  --chart-2:               oklch(0.672 0.085 235);
-  --chart-3:               oklch(0.650 0.120 150);
-  --chart-4:               oklch(0.700 0.100 90);
-  --chart-5:               oklch(0.600 0.130 30);
+  /* Charts: full brand palette, brightened for dark contexts */
+  --chart-1:               oklch(0.580 0.130 252);   /* #2E5E99 brightened */
+  --chart-2:               oklch(0.672 0.085 235);   /* #7BA4D0 */
+  --chart-3:               oklch(0.520 0.065 68);    /* #675B47 bronze brightened */
+  --chart-4:               oklch(0.420 0.028 90);    /* #363630 olive brightened */
+  --chart-5:               oklch(0.750 0.018 232);   /* soft light blue */
   --sidebar:               oklch(0.218 0.072 252);
   --sidebar-foreground:    oklch(0.916 0.022 232);
   --sidebar-primary:       oklch(0.580 0.130 252);

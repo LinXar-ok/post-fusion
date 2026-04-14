@@ -60,7 +60,7 @@ function ProductPreview() {
           <FloatCard delay={0.2} className="flex flex-col gap-3">
             <div
               className="w-8 h-8 rounded-xl flex items-center justify-center"
-              style={{ background: "rgba(99,102,241,0.15)", boxShadow: "var(--nm-inset-sm)" }}
+              style={{ background: "rgba(54,54,48,0.15)", boxShadow: "var(--nm-inset-sm)" }}
             >
               <Users className="w-4 h-4 text-indigo-400" />
             </div>
@@ -84,11 +84,11 @@ function ProductPreview() {
                 <div
                   className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0"
                   style={{
-                    background: item.ok ? "rgba(46,94,153,0.15)" : "rgba(245,158,11,0.15)",
+                    background: item.ok ? "rgba(46,94,153,0.15)" : "rgba(103,91,71,0.15)",
                     boxShadow: "var(--nm-inset-sm)",
                   }}
                 >
-                  <CheckCircle className="w-3 h-3" style={{ color: item.ok ? "#2E5E99" : "#F59E0B" }} />
+                  <CheckCircle className="w-3 h-3" style={{ color: item.ok ? "#2E5E99" : "#675B47" }} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs text-foreground truncate">{item.label}</p>

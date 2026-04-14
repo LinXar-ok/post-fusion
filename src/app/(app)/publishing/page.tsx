@@ -520,7 +520,7 @@ export default function PublishingPage() {
                     className="h-8 px-3 rounded-xl text-xs font-semibold flex items-center gap-1.5 bg-[var(--nm-bg)] transition-all"
                     style={{
                       boxShadow: showSchedule ? "var(--nm-inset-sm)" : "var(--nm-raised-xs)",
-                      color: showSchedule ? "#F59E0B" : undefined,
+                      color: showSchedule ? "#675B47" : undefined,
                     }}
                   >
                     <CalendarIcon className="w-3.5 h-3.5" />
@@ -534,7 +534,7 @@ export default function PublishingPage() {
                     className="h-8 px-3 rounded-xl text-xs font-semibold flex items-center gap-1.5 bg-[var(--nm-bg)] transition-all text-muted-foreground"
                     style={{
                       boxShadow: showBulk ? "var(--nm-inset-sm)" : "var(--nm-raised-xs)",
-                      color: showBulk ? "#6366F1" : undefined,
+                      color: showBulk ? "#363630" : undefined,
                     }}
                   >
                     <FileText className="w-3.5 h-3.5" />
@@ -588,7 +588,7 @@ export default function PublishingPage() {
                 <div className="px-6 pt-5 pb-4 flex items-center justify-between">
                   <div>
                     <h2 className="font-display text-sm font-semibold text-foreground flex items-center gap-2">
-                      <FileText className="w-4 h-4 text-[#6366F1]" />
+                      <FileText className="w-4 h-4 text-[#363630]" />
                       Bulk Schedule Posts
                     </h2>
                     <p className="text-xs text-muted-foreground mt-0.5">
@@ -607,7 +607,7 @@ export default function PublishingPage() {
 
                 <div
                   className="h-px mx-6 mb-5"
-                  style={{ background: "linear-gradient(to right, transparent, rgba(99,102,241,0.3), transparent)" }}
+                  style={{ background: "linear-gradient(to right, transparent, rgba(54,54,48,0.3), transparent)" }}
                 />
 
                 <div className="px-6 pb-6">
@@ -679,7 +679,7 @@ export default function PublishingPage() {
                           type="button"
                           onClick={handleCSVSubmit}
                           disabled={csvParsed.filter(r => !r.error).length === 0}
-                          className="h-8 px-4 rounded-xl text-xs font-semibold flex items-center gap-1.5 bg-[#6366F1] text-white hover:bg-[#4f46e5] disabled:opacity-50 transition-all"
+                          className="h-8 px-4 rounded-xl text-xs font-semibold flex items-center gap-1.5 bg-[#363630] text-white hover:bg-[#4f46e5] disabled:opacity-50 transition-all"
                           style={{ boxShadow: "var(--nm-raised-xs)" }}
                         >
                           <Clock className="w-3.5 h-3.5" />
@@ -691,7 +691,7 @@ export default function PublishingPage() {
 
                   {csvState === "inserting" && (
                     <div className="flex flex-col items-center justify-center py-10">
-                      <Loader2 className="w-7 h-7 text-[#6366F1] animate-spin mb-3" />
+                      <Loader2 className="w-7 h-7 text-[#363630] animate-spin mb-3" />
                       <p className="text-sm font-medium text-muted-foreground">Scheduling posts…</p>
                     </div>
                   )}

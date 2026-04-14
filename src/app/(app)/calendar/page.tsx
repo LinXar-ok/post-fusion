@@ -23,10 +23,10 @@ const PLATFORM_DOT: Record<string, string> = {
 }
 
 const STATUS_DOT: Record<string, string> = {
-  published: "#10B981",
-  scheduled: "#F59E0B",
+  published: "#7BA4D0",
+  scheduled: "#675B47",
   draft:     "#94a3b8",
-  failed:    "#F43F5E",
+  failed:    "#363630",
 }
 
 const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]

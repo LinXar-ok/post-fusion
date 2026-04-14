@@ -103,7 +103,7 @@ export default function InboxPage() {
       >
         <div
           className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5"
-          style={{ background: "rgba(245,158,11,0.12)", boxShadow: "var(--nm-inset-sm)" }}
+          style={{ background: "rgba(103,91,71,0.12)", boxShadow: "var(--nm-inset-sm)" }}
         >
           <Webhook className="w-4 h-4 text-amber-500" />
         </div>
