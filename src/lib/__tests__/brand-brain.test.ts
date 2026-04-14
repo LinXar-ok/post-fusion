@@ -1,4 +1,4 @@
-import { computeNudges } from '@/lib/brand-brain'
+import { computeNudges, buildBriefContext } from '@/lib/brand-brain'
 
 type Post = {
   content: string
@@ -65,5 +65,23 @@ describe('computeNudges', () => {
     ]
     const nudges = computeNudges(posts, NOW)
     expect(nudges).toHaveLength(0)
+  })
+})
+
+describe('buildBriefContext', () => {
+  it('returns a non-empty string from an array of post contents', () => {
+    const posts = ['Post about my morning', 'Thoughts on building in public', 'A lesson I learned']
+    const ctx = buildBriefContext(posts)
+    expect(typeof ctx).toBe('string')
+    expect(ctx.length).toBeGreaterThan(0)
+    expect(ctx).toContain('Post about my morning')
+  })
+
+  it('caps to 20 posts to stay within token limits', () => {
+    const posts = Array.from({ length: 30 }, (_, i) => `Post number ${i}`)
+    const ctx = buildBriefContext(posts)
+    // 20 posts joined with separator = 19 occurrences of '---'
+    const separatorCount = (ctx.match(/---/g) ?? []).length
+    expect(separatorCount).toBe(19)
   })
 })
