@@ -18,7 +18,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
 
   if (!post) return NextResponse.json({ error: 'Post not found' }, { status: 404 })
 
-  const analytics = post.post_analytics as { likes: number; comments: number; shares: number; engagement_rate: number } | null
+  const analytics = post.post_analytics as unknown as { likes: number; comments: number; shares: number; engagement_rate: number } | null
 
   if (!analytics || !process.env.GROQ_API_KEY) {
     return NextResponse.json({ post, analysis: null })
@@ -34,7 +34,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     .limit(10)
 
   const avgEngagement = topPosts
-    ? topPosts.reduce((s, p) => s + ((p.post_analytics as { engagement_rate: number } | null)?.engagement_rate ?? 0), 0) / topPosts.length
+    ? topPosts.reduce((s, p) => s + ((p.post_analytics as unknown as { engagement_rate: number } | null)?.engagement_rate ?? 0), 0) / topPosts.length
     : 0
 
   const prompt = `This social media post achieved a ${analytics.engagement_rate}% engagement rate (${analytics.likes} likes, ${analytics.comments} comments, ${analytics.shares} shares). The user's average is ${avgEngagement.toFixed(1)}%.\n\nPost content:\n"${post.content}"\n\nAnalyze why this post performed the way it did. Return ONLY valid JSON with no markdown:\n{"reasons": ["<specific reason with evidence from the post text>"], "hook_type": "<vulnerability|question|story|tip|humor|controversy>", "what_to_repeat": "<one sentence: what structural or tonal element to use again>", "what_to_avoid": "<one sentence, or null if it performed well>"}\n\nProvide exactly 3 reasons.`

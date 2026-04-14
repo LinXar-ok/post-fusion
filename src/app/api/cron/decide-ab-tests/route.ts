@@ -21,8 +21,8 @@ export async function POST(req: NextRequest) {
 
   let decided = 0
   for (const test of tests) {
-    const postA = test.post_a as { id: string; post_analytics: { engagement_rate: number } | null } | null
-    const postB = test.post_b as { id: string; post_analytics: { engagement_rate: number } | null } | null
+    const postA = test.post_a as unknown as { id: string; post_analytics: { engagement_rate: number } | null } | null
+    const postB = test.post_b as unknown as { id: string; post_analytics: { engagement_rate: number } | null } | null
     if (!postA || !postB) continue
 
     const winnerId = pickAbWinner(

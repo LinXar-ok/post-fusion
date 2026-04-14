@@ -45,17 +45,21 @@ export async function GET() {
 
   if (!posts || posts.length === 0) return NextResponse.json({ digest: null })
 
+  type AnalyticsShape = { engagement_rate: number } | null
+  const getAnalytics = (p: typeof posts[number]): AnalyticsShape =>
+    (p.post_analytics as unknown as AnalyticsShape)
+
   // Find top post by engagement_rate
-  const withAnalytics = posts.filter(p => p.post_analytics)
+  const withAnalytics = posts.filter(p => getAnalytics(p))
   const topPost = withAnalytics.sort((a, b) => {
-    const ar = (a.post_analytics as { engagement_rate: number } | null)?.engagement_rate ?? 0
-    const br = (b.post_analytics as { engagement_rate: number } | null)?.engagement_rate ?? 0
+    const ar = getAnalytics(a)?.engagement_rate ?? 0
+    const br = getAnalytics(b)?.engagement_rate ?? 0
     return br - ar
   })[0]
 
   const totalPosts = posts.length
   const avgEngagement = withAnalytics.length > 0
-    ? (withAnalytics.reduce((sum, p) => sum + ((p.post_analytics as { engagement_rate: number } | null)?.engagement_rate ?? 0), 0) / withAnalytics.length).toFixed(1)
+    ? (withAnalytics.reduce((sum, p) => sum + (getAnalytics(p)?.engagement_rate ?? 0), 0) / withAnalytics.length).toFixed(1)
     : '—'
 
   const context = buildBriefContext(posts.map(p => p.content))

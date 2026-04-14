@@ -11,6 +11,17 @@ import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis,
   CartesianGrid, Tooltip, LineChart, Line,
 } from "recharts"
+import { DigestCard } from "@/components/performance-coach/digest-card"
+import { AbTestCreator } from "@/components/performance-coach/ab-test-creator"
+
+type AbTest = {
+  id: string
+  status: 'running' | 'decided'
+  decide_after: string
+  post_a: { id: string; content: string; post_analytics?: { engagement_rate: number } | null }
+  post_b: { id: string; content: string; post_analytics?: { engagement_rate: number } | null }
+  winner?: { id: string; content: string } | null
+}
 
 type Post = {
   id: string
@@ -82,6 +93,10 @@ export default function AnalyticsPage() {
   const [dateStart, setDateStart] = useState("")
   const [dateEnd, setDateEnd] = useState("")
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const [activeTab, setActiveTab] = useState<'overview' | 'coach'>('overview')
+  const [digest, setDigest] = useState<{ summary: string; actions: string[]; metrics: Record<string, string | number> } | null>(null)
+  const [abTests, setAbTests] = useState<AbTest[]>([])
+  const [coachLoading, setCoachLoading] = useState(false)
 
   useEffect(() => {
     async function fetchData() {
@@ -219,6 +234,56 @@ export default function AnalyticsPage() {
           )}
         </div>
       </div>
+
+      {/* Tab row */}
+      <div className="flex gap-1 bg-white/[0.03] rounded-xl p-1 w-fit">
+        {(['overview', 'coach'] as const).map(tab => (
+          <button
+            key={tab}
+            onClick={() => {
+              setActiveTab(tab)
+              if (tab === 'coach' && !digest) {
+                setCoachLoading(true)
+                Promise.all([
+                  fetch('/api/performance-coach/digest').then(r => r.json()),
+                  fetch('/api/ab-tests').then(r => r.json()),
+                ]).then(([d, ab]) => {
+                  setDigest(d.digest)
+                  setAbTests(ab.tests ?? [])
+                  setCoachLoading(false)
+                })
+              }
+            }}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              activeTab === tab ? 'bg-[#128C7E] text-white' : 'text-slate-400 hover:text-foreground'
+            }`}
+          >
+            {tab === 'overview' ? 'Overview' : 'Performance Coach'}
+          </button>
+        ))}
+      </div>
+
+      {activeTab === 'coach' && (
+        <div className="space-y-8 max-w-3xl">
+          <section className="space-y-3">
+            <h2 className="text-xs uppercase tracking-widest text-slate-500">Weekly Digest</h2>
+            <DigestCard digest={digest} loading={coachLoading} />
+          </section>
+          <section className="space-y-3">
+            <h2 className="text-xs uppercase tracking-widest text-slate-500">A/B Tests</h2>
+            <AbTestCreator
+              tests={abTests}
+              onDecide={async (id) => {
+                const res = await fetch(`/api/ab-tests/${id}/decide`, { method: 'POST' })
+                const data = await res.json()
+                setAbTests(prev => prev.map(t => t.id === id ? data.test : t))
+              }}
+            />
+          </section>
+        </div>
+      )}
+
+      {activeTab === 'overview' && <>
 
       {/* Date range filter */}
       <div className="flex items-center gap-2.5 flex-wrap">
@@ -374,6 +439,8 @@ export default function AnalyticsPage() {
           </div>
         </div>
       </div>
+
+      </> }
     </div>
   )
 }

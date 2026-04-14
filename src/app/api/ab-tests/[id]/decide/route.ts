@@ -19,8 +19,8 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   if (!test) return NextResponse.json({ error: 'Test not found' }, { status: 404 })
   if (test.status === 'decided') return NextResponse.json({ test })
 
-  const postA = test.post_a as { id: string; post_analytics: { engagement_rate: number } | null } | null
-  const postB = test.post_b as { id: string; post_analytics: { engagement_rate: number } | null } | null
+  const postA = test.post_a as unknown as { id: string; post_analytics: { engagement_rate: number } | null } | null
+  const postB = test.post_b as unknown as { id: string; post_analytics: { engagement_rate: number } | null } | null
 
   if (!postA || !postB) return NextResponse.json({ error: 'Posts not found' }, { status: 422 })
 
