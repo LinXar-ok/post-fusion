@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
+import { VoiceScoreMeter } from "@/components/brand-brain/voice-score-meter"
 import Papa from "papaparse"
 import { parseCSV } from "@/lib/csv-parser"
 import { motion, AnimatePresence } from "framer-motion"
@@ -53,6 +54,34 @@ export default function PublishingPage() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
   const [feedbackMsg, setFeedbackMsg] = useState("")
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const [voiceScore, setVoiceScore] = useState<{ score: number | null; traits: string[]; flags: string[] } | null>(null)
+  const [voiceLoading, setVoiceLoading] = useState(false)
+  const voiceDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    if (voiceDebounceRef.current) clearTimeout(voiceDebounceRef.current)
+    if (content.length < 80) {
+      setVoiceScore(null)
+      return
+    }
+    setVoiceLoading(true)
+    voiceDebounceRef.current = setTimeout(async () => {
+      try {
+        const res = await fetch('/api/brand-brain/voice-score', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content }),
+        })
+        const data = await res.json()
+        setVoiceScore(data)
+      } catch {
+        setVoiceScore(null)
+      } finally {
+        setVoiceLoading(false)
+      }
+    }, 1200)
+  }, [content])
 
   const handleTogglePlatform = (platform: string) =>
     setSelectedPlatforms(prev =>
@@ -317,6 +346,13 @@ export default function PublishingPage() {
                 value={content}
                 onChange={e => setContent(e.target.value)}
                 disabled={status === "loading"}
+              />
+
+              <VoiceScoreMeter
+                score={voiceScore?.score ?? null}
+                traits={voiceScore?.traits ?? []}
+                flags={voiceScore?.flags ?? []}
+                loading={voiceLoading}
               />
 
               {/* Media preview */}
