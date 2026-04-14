@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { TrendingUp, CheckCircle2, Clock, AlertTriangle, FileText, Download, ChevronDown } from "lucide-react"
+import { TrendingUp, CheckCircle2, Clock, AlertTriangle, FileText, Download, ChevronDown, Calendar } from "lucide-react"
 import { exportCSV, buildReportTitle } from "@/lib/report-export"
 import {
   ResponsiveContainer,
@@ -60,6 +60,8 @@ export default function AnalyticsPage() {
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
   const [exportOpen, setExportOpen] = useState(false)
+  const [dateStart, setDateStart] = useState("")
+  const [dateEnd, setDateEnd] = useState("")
 
   useEffect(() => {
     async function fetchData() {
@@ -76,11 +78,18 @@ export default function AnalyticsPage() {
     fetchData()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const published = posts.filter(p => p.status === "published")
-  const scheduled = posts.filter(p => p.status === "scheduled")
-  const failed = posts.filter(p => p.status === "failed")
-  const weeklyData = getWeeklyData(posts)
-  const platformData = getPlatformData(posts)
+  const filtered = posts.filter(p => {
+    const t = p.published_at ? new Date(p.published_at).getTime() : new Date(p.created_at).getTime()
+    const startMs = dateStart ? new Date(dateStart).getTime() : 0
+    const endMs = dateEnd ? new Date(dateEnd).getTime() : Infinity
+    return t >= startMs && t <= endMs
+  })
+
+  const published = filtered.filter(p => p.status === "published")
+  const scheduled = filtered.filter(p => p.status === "scheduled")
+  const failed = filtered.filter(p => p.status === "failed")
+  const weeklyData = getWeeklyData(filtered)
+  const platformData = getPlatformData(filtered)
 
   const statCards = [
     { title: "Total Posts", value: posts.length, icon: FileText, color: "teal" },
@@ -99,7 +108,7 @@ export default function AnalyticsPage() {
   }, [exportOpen])
 
   const handleExportCSV = () => {
-    exportCSV(posts, null, null)
+    exportCSV(filtered, dateStart || null, dateEnd || null)
     setExportOpen(false)
   }
 
@@ -109,9 +118,9 @@ export default function AnalyticsPage() {
     const { pdf } = await import("@react-pdf/renderer")
     const doc = pdf(
       <PDFReport
-        posts={posts}
-        dateRange={buildReportTitle(null, null)}
-        stats={{ total: posts.length, published: published.length, scheduled: scheduled.length, failed: failed.length }}
+        posts={filtered}
+        dateRange={buildReportTitle(dateStart || null, dateEnd || null)}
+        stats={{ total: filtered.length, published: published.length, scheduled: scheduled.length, failed: failed.length }}
         platformData={platformData}
       />
     )
@@ -162,6 +171,34 @@ export default function AnalyticsPage() {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Date Range Filter */}
+      <div className="flex items-center gap-2 mb-6 shrink-0">
+        <Calendar className="w-4 h-4 text-slate-400" />
+        <input
+          type="date"
+          value={dateStart}
+          onChange={e => setDateStart(e.target.value)}
+          className="h-8 rounded-lg border border-slate-200 bg-white px-2.5 text-xs text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#128C7E]/50 focus-visible:border-[#128C7E]"
+          aria-label="Start date"
+        />
+        <span className="text-xs text-slate-400">to</span>
+        <input
+          type="date"
+          value={dateEnd}
+          onChange={e => setDateEnd(e.target.value)}
+          className="h-8 rounded-lg border border-slate-200 bg-white px-2.5 text-xs text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#128C7E]/50 focus-visible:border-[#128C7E]"
+          aria-label="End date"
+        />
+        {(dateStart || dateEnd) && (
+          <button
+            onClick={() => { setDateStart(""); setDateEnd("") }}
+            className="text-xs text-slate-400 hover:text-slate-600 underline underline-offset-2"
+          >
+            Clear
+          </button>
+        )}
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8 shrink-0">
