@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react"
 import { VoiceScoreMeter } from "@/components/brand-brain/voice-score-meter"
+import { PlatformPreview } from "@/components/publishing/platform-preview"
 import Papa from "papaparse"
 import { parseCSV } from "@/lib/csv-parser"
 import { motion, AnimatePresence } from "framer-motion"
@@ -53,6 +54,7 @@ export default function PublishingPage() {
 
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
   const [feedbackMsg, setFeedbackMsg] = useState("")
+  const [queueLoading, setQueueLoading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [voiceScore, setVoiceScore] = useState<{ score: number | null; traits: string[]; flags: string[] } | null>(null)
@@ -140,6 +142,29 @@ export default function PublishingPage() {
     }
     setAiResult("")
     setAiType(null)
+  }
+
+  const handleAddToQueue = async () => {
+    setQueueLoading(true)
+    try {
+      const res = await fetch('/api/queue/next-slot')
+      const { next } = await res.json()
+      if (!next) {
+        setFeedbackMsg('No queue slots set up. Add time slots in Settings → Smart Queue.')
+        setStatus('error')
+        return
+      }
+      setScheduledFor(next.slice(0, 16)) // 'YYYY-MM-DDTHH:mm'
+      setShowSchedule(true)
+      setFeedbackMsg(`Queued for ${new Date(next).toLocaleString()}`)
+      setStatus('success')
+    } catch {
+      setFeedbackMsg('Could not fetch next queue slot.')
+      setStatus('error')
+    } finally {
+      setQueueLoading(false)
+      setTimeout(() => setStatus('idle'), 3000)
+    }
   }
 
   const handlePublish = async () => {
@@ -354,6 +379,8 @@ export default function PublishingPage() {
                 flags={voiceScore?.flags ?? []}
                 loading={voiceLoading}
               />
+
+              <PlatformPreview content={content} platforms={selectedPlatforms} />
 
               {/* Media preview */}
               {mediaPreview && (
@@ -585,9 +612,18 @@ export default function PublishingPage() {
 
               {/* Footer — publish */}
               <div
-                className="pt-4 mt-2 flex justify-end"
+                className="pt-4 mt-2 flex items-center justify-end gap-2"
                 style={{ borderTop: "1px solid color-mix(in oklch, var(--border) 60%, transparent)" }}
               >
+                <button
+                  type="button"
+                  onClick={handleAddToQueue}
+                  disabled={queueLoading || selectedPlatforms.length === 0 || !content.trim()}
+                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-white/10 text-sm text-slate-300 hover:border-[#128C7E] hover:text-[#128C7E] disabled:opacity-50 transition-colors"
+                >
+                  {queueLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Clock className="w-4 h-4" />}
+                  Add to Queue
+                </button>
                 <button
                   type="button"
                   onClick={handlePublish}
