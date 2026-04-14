@@ -57,9 +57,19 @@ export default function PublishingPage() {
   const [queueLoading, setQueueLoading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  const [pillars, setPillars] = useState<{ id: string; name: string; emoji: string; color: string }[]>([])
+  const [selectedPillar, setSelectedPillar] = useState<string>('')
+
   const [voiceScore, setVoiceScore] = useState<{ score: number | null; traits: string[]; flags: string[] } | null>(null)
   const [voiceLoading, setVoiceLoading] = useState(false)
   const voiceDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    fetch('/api/content-pillars')
+      .then(r => r.json())
+      .then(data => setPillars(data.pillars ?? []))
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     if (voiceDebounceRef.current) clearTimeout(voiceDebounceRef.current)
@@ -205,6 +215,7 @@ export default function PublishingPage() {
       const payload = {
         content, platforms: selectedPlatforms, media_urls, hashtags, emotion,
         scheduled_for: showSchedule && scheduledFor ? new Date(scheduledFor).toISOString() : null,
+        pillar_id: selectedPillar || null,
       }
 
       const res = await fetch("/api/publish", {
@@ -222,7 +233,7 @@ export default function PublishingPage() {
       setFeedbackMsg(msg)
 
       setContent(""); setMediaFile(null); setMediaPreview(null); setMediaUrl(null)
-      setHashtagsInput(""); setEmotion(""); setScheduledFor("")
+      setHashtagsInput(""); setEmotion(""); setScheduledFor(""); setSelectedPillar("")
       setShowSchedule(false); setShowMetadata(false); setShowBulk(false)
       setAiResult(""); setAiType(null)
       setCsvRaw(null); setCsvParsed([]); setCsvState("idle")
@@ -400,6 +411,38 @@ export default function PublishingPage() {
                   >
                     <X className="w-3 h-3" />
                   </button>
+                </div>
+              )}
+
+              {/* Pillar selector */}
+              {pillars.length > 0 && (
+                <div className="space-y-1.5">
+                  <p className="text-xs text-slate-400 uppercase tracking-wide">Content Pillar</p>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedPillar('')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border ${
+                        selectedPillar === '' ? 'border-[#128C7E] text-[#128C7E] bg-[#128C7E]/10' : 'border-white/10 text-slate-400 hover:border-white/20'
+                      }`}
+                    >
+                      None
+                    </button>
+                    {pillars.map(p => (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() => setSelectedPillar(p.id)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border flex items-center gap-1.5 ${
+                          selectedPillar === p.id ? 'text-white' : 'border-white/10 text-slate-400 hover:border-white/20'
+                        }`}
+                        style={selectedPillar === p.id ? { borderColor: p.color, background: `${p.color}20`, color: p.color } : {}}
+                      >
+                        <span>{p.emoji}</span>
+                        <span>{p.name}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
 
