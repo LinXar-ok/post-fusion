@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import {
   Calendar, Inbox, LayoutDashboard, Settings, Activity,
-  PenSquare, Sparkles, Image as ImageIcon, Radio, Brain,
+  PenSquare, Sparkles, Image as ImageIcon, Radio, Brain, Link2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -18,6 +18,7 @@ const navItems = [
   { name: 'Listening',     href: '/listening',     icon: Radio },
   { name: 'Analytics',     href: '/analytics',     icon: Activity },
   { name: 'Brand Brain',   href: '/brand-brain',   icon: Brain },
+  { name: 'Link-in-Bio',   href: '/link-in-bio',   icon: Link2 },
   { name: 'Settings',      href: '/settings',      icon: Settings },
 ]
 
