@@ -107,7 +107,7 @@ export default function CalendarPage() {
         <Link href="/publishing">
           <button
             type="button"
-            className="h-10 px-5 rounded-xl flex items-center gap-2 text-sm font-semibold bg-[#128C7E] text-white hover:bg-[#0e7066] transition-colors"
+            className="h-10 px-5 rounded-xl flex items-center gap-2 text-sm font-semibold bg-[#2E5E99] text-white hover:bg-[#0e7066] transition-colors"
             style={{ boxShadow: "var(--nm-raised-sm)" }}
           >
             <Plus className="w-4 h-4" />
@@ -145,7 +145,7 @@ export default function CalendarPage() {
         {/* Teal accent line */}
         <div
           className="h-px mx-6 mb-1 shrink-0"
-          style={{ background: "linear-gradient(to right, transparent, rgba(18,140,126,0.35), transparent)" }}
+          style={{ background: "linear-gradient(to right, transparent, rgba(46,94,153,0.35), transparent)" }}
         />
 
         {/* Grid container — recessed well */}
@@ -198,7 +198,7 @@ export default function CalendarPage() {
                       className={cn(
                         "text-xs font-semibold w-6 h-6 flex items-center justify-center rounded-full transition-all",
                         isToday
-                          ? "bg-[#128C7E] text-white"
+                          ? "bg-[#2E5E99] text-white"
                           : "text-muted-foreground"
                       )}
                       style={isToday ? { boxShadow: "var(--nm-raised-xs)" } : undefined}
@@ -211,7 +211,7 @@ export default function CalendarPage() {
                   {!isOutside && !loading && dayPosts.map(post => {
                     const platform = post.platforms?.[0]
                     const dotColor = platform
-                      ? (PLATFORM_DOT[platform] ?? "#128C7E")
+                      ? (PLATFORM_DOT[platform] ?? "#2E5E99")
                       : (STATUS_DOT[post.status] ?? "#94a3b8")
                     return (
                       <div

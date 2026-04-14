@@ -50,112 +50,105 @@
 }
 
 /* ─────────────────────────────────────────────────────────────
-   LIGHT MODE — Neumorphic soft gray surface
+   LIGHT MODE — Blue-tinted neumorphic surface
+   Base: #E7F0FA  Shadow dark: blue-tinted  Shadow light: white
    ───────────────────────────────────────────────────────────── */
 :root {
-  /* Neumorphic shadow tokens */
-  --nm-bg: #E4E8EF;
-  --nm-raised:    6px 6px 14px rgba(163, 177, 198, 0.6), -6px -6px 14px rgba(255, 255, 255, 0.85);
-  --nm-raised-sm: 3px 3px  8px rgba(163, 177, 198, 0.5), -3px -3px  8px rgba(255, 255, 255, 0.80);
-  --nm-raised-xs: 2px 2px  5px rgba(163, 177, 198, 0.4), -2px -2px  5px rgba(255, 255, 255, 0.75);
-  --nm-inset:     inset 4px 4px 10px rgba(163, 177, 198, 0.55), inset -4px -4px 10px rgba(255, 255, 255, 0.80);
-  --nm-inset-sm:  inset 2px 2px  6px rgba(163, 177, 198, 0.50), inset -2px -2px  6px rgba(255, 255, 255, 0.75);
-  --nm-teal-glow: 0 0 0 2px rgba(18, 140, 126, 0.25);
+  /* Neumorphic shadow tokens — blue-tinted for the new palette */
+  --nm-bg: #E7F0FA;
+  --nm-raised:    6px 6px 14px rgba(46, 94, 153, 0.22), -6px -6px 14px rgba(255, 255, 255, 0.90);
+  --nm-raised-sm: 3px 3px  8px rgba(46, 94, 153, 0.18), -3px -3px  8px rgba(255, 255, 255, 0.85);
+  --nm-raised-xs: 2px 2px  5px rgba(46, 94, 153, 0.14), -2px -2px  5px rgba(255, 255, 255, 0.80);
+  --nm-inset:     inset 4px 4px 10px rgba(46, 94, 153, 0.20), inset -4px -4px 10px rgba(255, 255, 255, 0.85);
+  --nm-inset-sm:  inset 2px 2px  6px rgba(46, 94, 153, 0.17), inset -2px -2px  6px rgba(255, 255, 255, 0.80);
+  --nm-teal-glow: 0 0 0 2px rgba(46, 94, 153, 0.30);
 
   /* Brand */
-  --teal: #128C7E;
-  --navy: #0B1020;
+  --brand: #2E5E99;
+  --navy: #0D2440;
 
-  /* shadcn tokens — tuned to neumorphic palette */
-  --background:            oklch(0.923 0.008 252);   /* #E4E8EF */
-  --foreground:            oklch(0.127 0.027 264);   /* #0B1020 */
-  --card:                  oklch(0.923 0.008 252);
-  --card-foreground:       oklch(0.127 0.027 264);
-  --popover:               oklch(0.950 0.005 252);
-  --popover-foreground:    oklch(0.127 0.027 264);
-  --primary:               oklch(0.554 0.098 181);   /* #128C7E */
+  /* shadcn tokens */
+  --background:            oklch(0.948 0.020 234);   /* #E7F0FA */
+  --foreground:            oklch(0.145 0.062 252);   /* #0D2440 */
+  --card:                  oklch(0.948 0.020 234);
+  --card-foreground:       oklch(0.145 0.062 252);
+  --popover:               oklch(0.965 0.014 234);
+  --popover-foreground:    oklch(0.145 0.062 252);
+  --primary:               oklch(0.410 0.130 252);   /* #2E5E99 */
   --primary-foreground:    oklch(0.985 0 0);
-  --secondary:             oklch(0.885 0.010 252);
-  --secondary-foreground:  oklch(0.127 0.027 264);
-  --muted:                 oklch(0.895 0.009 252);
-  --muted-foreground:      oklch(0.500 0.020 252);
-  --accent:                oklch(0.885 0.010 252);
-  --accent-foreground:     oklch(0.127 0.027 264);
+  --secondary:             oklch(0.900 0.025 234);
+  --secondary-foreground:  oklch(0.145 0.062 252);
+  --muted:                 oklch(0.910 0.022 234);
+  --muted-foreground:      oklch(0.480 0.055 248);   /* #4A6E95 */
+  --accent:                oklch(0.900 0.025 234);
+  --accent-foreground:     oklch(0.145 0.062 252);
   --destructive:           oklch(0.577 0.245 27.325);
-  --border:                oklch(0.870 0.010 252);
-  --input:                 oklch(0.870 0.010 252);
-  --ring:                  oklch(0.554 0.098 181);
-  --chart-1:               oklch(0.554 0.098 181);
-  --chart-2:               oklch(0.550 0.150 220);
+  --border:                oklch(0.880 0.030 234);
+  --input:                 oklch(0.880 0.030 234);
+  --ring:                  oklch(0.410 0.130 252);
+  --chart-1:               oklch(0.410 0.130 252);   /* #2E5E99 */
+  --chart-2:               oklch(0.590 0.095 232);   /* #7BA4D0 */
   --chart-3:               oklch(0.650 0.120 150);
   --chart-4:               oklch(0.700 0.100 90);
   --chart-5:               oklch(0.600 0.130 30);
   --radius: 0.75rem;
-  --sidebar:               oklch(0.923 0.008 252);
-  --sidebar-foreground:    oklch(0.127 0.027 264);
-  --sidebar-primary:       oklch(0.554 0.098 181);
+  --sidebar:               oklch(0.948 0.020 234);
+  --sidebar-foreground:    oklch(0.145 0.062 252);
+  --sidebar-primary:       oklch(0.410 0.130 252);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent:        oklch(0.885 0.010 252);
-  --sidebar-accent-foreground: oklch(0.127 0.027 264);
-  --sidebar-border:        oklch(0.870 0.010 252);
-  --sidebar-ring:          oklch(0.554 0.098 181);
+  --sidebar-accent:        oklch(0.900 0.025 234);
+  --sidebar-accent-foreground: oklch(0.145 0.062 252);
+  --sidebar-border:        oklch(0.880 0.030 234);
+  --sidebar-ring:          oklch(0.410 0.130 252);
 }
 
 /* ─────────────────────────────────────────────────────────────
-   DARK MODE — Two-layer deep navy neumorphic surface
-   Page bg (#0D1426) is darker than nm-bg (#1C2B45) so cards
-   visibly float above the page. Shadows increased so depth
-   is perceptible on a dark base.
+   DARK MODE — Single-layer deep navy (old approach preserved)
+   nm-bg = background so depth comes entirely from shadow contrast.
+   Surface: #1A3154  Shadow dark: 0.55  Shadow light: 0.055
    ───────────────────────────────────────────────────────────── */
 .dark {
-  /* Surface: notably lighter than the page background — this
-     gives neumorphic shadows room to breathe */
-  --nm-bg: #1C2B45;
+  /* Surface — derived from #0D2440, stepped up for shadow visibility */
+  --nm-bg: #1A3154;
+  --nm-raised:    6px 6px 14px rgba(0, 0, 0, 0.55), -6px -6px 14px rgba(255, 255, 255, 0.055);
+  --nm-raised-sm: 3px 3px  8px rgba(0, 0, 0, 0.50), -3px -3px  8px rgba(255, 255, 255, 0.048);
+  --nm-raised-xs: 2px 2px  5px rgba(0, 0, 0, 0.45), -2px -2px  5px rgba(255, 255, 255, 0.040);
+  --nm-inset:     inset 4px 4px 10px rgba(0, 0, 0, 0.52), inset -4px -4px 10px rgba(255, 255, 255, 0.050);
+  --nm-inset-sm:  inset 2px 2px  6px rgba(0, 0, 0, 0.48), inset -2px -2px  6px rgba(255, 255, 255, 0.044);
+  --nm-teal-glow: 0 0 0 2px rgba(46, 94, 153, 0.40);
 
-  /* Stronger contrast: deeper darks + more visible highlights */
-  --nm-raised:    6px 6px 16px rgba(0, 0, 0, 0.70), -6px -6px 16px rgba(255, 255, 255, 0.065);
-  --nm-raised-sm: 3px 3px  9px rgba(0, 0, 0, 0.65), -3px -3px  9px rgba(255, 255, 255, 0.055);
-  --nm-raised-xs: 2px 2px  5px rgba(0, 0, 0, 0.55), -2px -2px  5px rgba(255, 255, 255, 0.045);
-  --nm-inset:     inset 4px 4px 12px rgba(0, 0, 0, 0.65), inset -4px -4px 12px rgba(255, 255, 255, 0.055);
-  --nm-inset-sm:  inset 2px 2px  7px rgba(0, 0, 0, 0.60), inset -2px -2px  7px rgba(255, 255, 255, 0.050);
-  --nm-teal-glow: 0 0 0 2px rgba(18, 140, 126, 0.40);
-
-  /* Page bg: deep navy — visually distinct from nm-bg surfaces */
-  --background:            oklch(0.133 0.038 252);   /* #0D1426 */
-  /* Warm blue-white — softer than pure white, easier on eyes */
-  --foreground:            oklch(0.855 0.018 228);   /* #C8D6E5 */
-  /* Card / surface — matches nm-bg */
-  --card:                  oklch(0.210 0.042 248);   /* #1C2B45 */
-  --card-foreground:       oklch(0.855 0.018 228);
-  --popover:               oklch(0.235 0.045 248);
-  --popover-foreground:    oklch(0.855 0.018 228);
-  --primary:               oklch(0.554 0.098 181);   /* #128C7E */
+  /* background = nm-bg (single-layer — old approach) */
+  --background:            oklch(0.218 0.072 252);   /* #1A3154 */
+  --foreground:            oklch(0.916 0.022 232);   /* #D4E5F5 */
+  --card:                  oklch(0.218 0.072 252);
+  --card-foreground:       oklch(0.916 0.022 232);
+  --popover:               oklch(0.250 0.076 252);
+  --popover-foreground:    oklch(0.916 0.022 232);
+  --primary:               oklch(0.580 0.130 252);   /* lighter #2E5E99 in dark */
   --primary-foreground:    oklch(0.985 0 0);
-  --secondary:             oklch(0.235 0.045 248);
-  --secondary-foreground:  oklch(0.855 0.018 228);
-  --muted:                 oklch(0.235 0.045 248);
-  /* Muted text: sufficient contrast on #1C2B45 surface */
-  --muted-foreground:      oklch(0.525 0.028 238);   /* #607888 */
-  --accent:                oklch(0.235 0.045 248);
-  --accent-foreground:     oklch(0.855 0.018 228);
+  --secondary:             oklch(0.250 0.076 252);
+  --secondary-foreground:  oklch(0.916 0.022 232);
+  --muted:                 oklch(0.250 0.076 252);
+  --muted-foreground:      oklch(0.610 0.060 240);   /* #6A90B8 */
+  --accent:                oklch(0.250 0.076 252);
+  --accent-foreground:     oklch(0.916 0.022 232);
   --destructive:           oklch(0.704 0.191 22.216);
-  --border:                oklch(1 0 0 / 7%);
-  --input:                 oklch(1 0 0 / 9%);
-  --ring:                  oklch(0.554 0.098 181);
-  --chart-1:               oklch(0.554 0.098 181);
-  --chart-2:               oklch(0.550 0.150 220);
+  --border:                oklch(1 0 0 / 8%);
+  --input:                 oklch(1 0 0 / 10%);
+  --ring:                  oklch(0.580 0.130 252);
+  --chart-1:               oklch(0.580 0.130 252);
+  --chart-2:               oklch(0.672 0.085 235);
   --chart-3:               oklch(0.650 0.120 150);
   --chart-4:               oklch(0.700 0.100 90);
   --chart-5:               oklch(0.600 0.130 30);
-  /* Sidebar matches card surface */
-  --sidebar:               oklch(0.210 0.042 248);
-  --sidebar-foreground:    oklch(0.855 0.018 228);
-  --sidebar-primary:       oklch(0.554 0.098 181);
+  --sidebar:               oklch(0.218 0.072 252);
+  --sidebar-foreground:    oklch(0.916 0.022 232);
+  --sidebar-primary:       oklch(0.580 0.130 252);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent:        oklch(0.235 0.045 248);
-  --sidebar-accent-foreground: oklch(0.855 0.018 228);
-  --sidebar-border:        oklch(1 0 0 / 7%);
-  --sidebar-ring:          oklch(0.554 0.098 181);
+  --sidebar-accent:        oklch(0.250 0.076 252);
+  --sidebar-accent-foreground: oklch(0.916 0.022 232);
+  --sidebar-border:        oklch(1 0 0 / 8%);
+  --sidebar-ring:          oklch(0.580 0.130 252);
 }
 
 @layer base {
@@ -164,21 +157,18 @@
   }
   body {
     @apply bg-background text-foreground;
-    /* Smooth color-scheme transitions when toggling dark mode */
     transition: background-color 0.3s ease, color 0.2s ease;
   }
   html {
     @apply font-sans;
   }
-
-  /* Ensure native inputs inherit nm color context */
   input, textarea, select {
     color-scheme: light dark;
   }
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Neumorphic motion: respect prefers-reduced-motion
+   Respect prefers-reduced-motion
    ───────────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -189,11 +179,11 @@
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Teal pulse keyframe — used on active indicators
+   Brand pulse keyframe — active nav indicator
    ───────────────────────────────────────────────────────────── */
-@keyframes teal-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(18,140,126,0.35); }
-  50%       { box-shadow: 0 0 0 6px rgba(18,140,126,0); }
+@keyframes brand-pulse {
+  0%, 100% { box-shadow: 0 0 0 0   rgba(46, 94, 153, 0.40); }
+  50%       { box-shadow: 0 0 0 6px rgba(46, 94, 153, 0);    }
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -206,7 +196,6 @@
   .nm-inset     { box-shadow: var(--nm-inset); }
   .nm-inset-sm  { box-shadow: var(--nm-inset-sm); }
   .nm-teal-ring { box-shadow: var(--nm-teal-glow); }
+  .nm-pulse     { animation: brand-pulse 2s ease-in-out infinite; }
   .font-display { font-family: var(--font-display), var(--font-sans), sans-serif; }
-  /* Active nav dot pulsing */
-  .nm-pulse     { animation: teal-pulse 2s ease-in-out infinite; }
 }

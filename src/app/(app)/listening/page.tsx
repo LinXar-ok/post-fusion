@@ -194,9 +194,9 @@ export default function ListeningPage() {
         >
           <div
             className="w-9 h-9 rounded-xl flex items-center justify-center"
-            style={{ background: "rgba(18,140,126,0.12)", boxShadow: "var(--nm-inset-sm)" }}
+            style={{ background: "rgba(46,94,153,0.12)", boxShadow: "var(--nm-inset-sm)" }}
           >
-            <TrendingUp className="w-4 h-4 text-[#128C7E]" />
+            <TrendingUp className="w-4 h-4 text-[#2E5E99]" />
           </div>
           <div>
             <div className="font-display text-4xl font-bold text-foreground leading-none mb-1.5">
@@ -221,9 +221,9 @@ export default function ListeningPage() {
             <div className="flex items-center gap-2 mb-5">
               <div
                 className="w-8 h-8 rounded-xl flex items-center justify-center"
-                style={{ background: "rgba(18,140,126,0.12)", boxShadow: "var(--nm-inset-sm)" }}
+                style={{ background: "rgba(46,94,153,0.12)", boxShadow: "var(--nm-inset-sm)" }}
               >
-                <Radio className="w-4 h-4 text-[#128C7E]" />
+                <Radio className="w-4 h-4 text-[#2E5E99]" />
               </div>
               <h2 className="font-display text-base font-semibold text-foreground">Tracked Keywords</h2>
             </div>
@@ -242,7 +242,7 @@ export default function ListeningPage() {
                 type="button"
                 onClick={addKeyword}
                 disabled={!newKeyword.trim()}
-                className="h-9 w-9 rounded-xl flex items-center justify-center bg-[#128C7E] text-white shrink-0 disabled:opacity-40"
+                className="h-9 w-9 rounded-xl flex items-center justify-center bg-[#2E5E99] text-white shrink-0 disabled:opacity-40"
                 style={{ boxShadow: "var(--nm-raised-sm)" }}
               >
                 <Plus className="w-4 h-4" />
@@ -257,7 +257,7 @@ export default function ListeningPage() {
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-foreground bg-[var(--nm-bg)]"
                     style={{ boxShadow: "var(--nm-inset-sm)" }}
                   >
-                    <Radio className="w-3 h-3 text-[#128C7E]" />
+                    <Radio className="w-3 h-3 text-[#2E5E99]" />
                     {kw.keyword}
                     <button
                       type="button"
@@ -296,7 +296,7 @@ export default function ListeningPage() {
               type="button"
               onClick={analyzePost}
               disabled={!keywordInput.trim() || analyzing}
-              className="w-full h-9 rounded-xl text-sm font-semibold text-white bg-[#128C7E] flex items-center justify-center gap-2 disabled:opacity-40 transition-all"
+              className="w-full h-9 rounded-xl text-sm font-semibold text-white bg-[#2E5E99] flex items-center justify-center gap-2 disabled:opacity-40 transition-all"
               style={{ boxShadow: "var(--nm-raised-sm)" }}
             >
               {analyzing
@@ -353,9 +353,9 @@ export default function ListeningPage() {
             <div className="flex items-center gap-2 mb-5">
               <div
                 className="w-8 h-8 rounded-xl flex items-center justify-center"
-                style={{ background: "rgba(18,140,126,0.12)", boxShadow: "var(--nm-inset-sm)" }}
+                style={{ background: "rgba(46,94,153,0.12)", boxShadow: "var(--nm-inset-sm)" }}
               >
-                <MessageSquare className="w-4 h-4 text-[#128C7E]" />
+                <MessageSquare className="w-4 h-4 text-[#2E5E99]" />
               </div>
               <h2 className="font-display text-base font-semibold text-foreground">Recently Analyzed</h2>
             </div>

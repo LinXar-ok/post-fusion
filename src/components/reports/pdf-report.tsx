@@ -1,7 +1,7 @@
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer"
 
-const teal = "#128C7E"
-const navy = "#0B1020"
+const teal = "#2E5E99"
+const navy = "#0D2440"
 const lightGray = "#f1f5f9"
 const midGray = "#64748b"
 
@@ -45,7 +45,7 @@ type Props = {
   platformData: { platform: string; posts: number }[]
 }
 
-const barColors = ["#128C7E", "#0A66C2", "#1877F2", "#FF9500"]
+const barColors = ["#2E5E99", "#0A66C2", "#1877F2", "#FF9500"]
 
 export const PDFReport = ({ posts, dateRange, stats, platformData }: Props) => {
   const maxPlatform = Math.max(...platformData.map(p => p.posts), 1)

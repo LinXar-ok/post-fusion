@@ -62,13 +62,13 @@ function NmTooltip({ active, payload, label }: {
       style={{ boxShadow: "var(--nm-raised-sm)" }}
     >
       <p className="text-muted-foreground font-medium mb-0.5">{label}</p>
-      <p style={{ color: "#128C7E" }}>{payload[0].value} posts</p>
+      <p style={{ color: "#2E5E99" }}>{payload[0].value} posts</p>
     </div>
   )
 }
 
 const statMeta = [
-  { color: "#128C7E", bg: "rgba(18,140,126,0.12)"  },
+  { color: "#2E5E99", bg: "rgba(46,94,153,0.12)"  },
   { color: "#10B981", bg: "rgba(16,185,129,0.12)"  },
   { color: "#F59E0B", bg: "rgba(245,158,11,0.12)"  },
   { color: "#F43F5E", bg: "rgba(244,63,94,0.12)"   },
@@ -186,7 +186,7 @@ export default function AnalyticsPage() {
             className="h-9 px-4 rounded-xl flex items-center gap-2 text-sm font-semibold text-foreground bg-[var(--nm-bg)] transition-all"
             style={{ boxShadow: exportOpen ? "var(--nm-inset-sm)" : "var(--nm-raised-sm)" }}
           >
-            <Download className="w-4 h-4 text-[#128C7E]" />
+            <Download className="w-4 h-4 text-[#2E5E99]" />
             Export
             <ChevronDown className={`w-3 h-3 text-muted-foreground transition-transform ${exportOpen ? "rotate-180" : ""}`} />
           </button>
@@ -198,7 +198,7 @@ export default function AnalyticsPage() {
             >
               <div
                 className="h-px mx-3 mb-1 mt-1"
-                style={{ background: "linear-gradient(to right, transparent, rgba(18,140,126,0.3), transparent)" }}
+                style={{ background: "linear-gradient(to right, transparent, rgba(46,94,153,0.3), transparent)" }}
               />
               {[
                 { label: "Export as CSV", icon: FileText, action: handleExportCSV },
@@ -208,9 +208,9 @@ export default function AnalyticsPage() {
                   key={label}
                   type="button"
                   onClick={action}
-                  className="w-full px-4 py-2.5 text-sm text-left text-foreground flex items-center gap-2.5 transition-all hover:text-[#128C7E]"
+                  className="w-full px-4 py-2.5 text-sm text-left text-foreground flex items-center gap-2.5 transition-all hover:text-[#2E5E99]"
                 >
-                  <Icon className="w-4 h-4 text-[#128C7E] shrink-0" />
+                  <Icon className="w-4 h-4 text-[#2E5E99] shrink-0" />
                   {label}
                 </button>
               ))}
@@ -226,7 +226,7 @@ export default function AnalyticsPage() {
           className="w-8 h-8 rounded-xl flex items-center justify-center bg-[var(--nm-bg)] shrink-0"
           style={{ boxShadow: "var(--nm-raised-xs)" }}
         >
-          <Calendar className="w-3.5 h-3.5 text-[#128C7E]" />
+          <Calendar className="w-3.5 h-3.5 text-[#2E5E99]" />
         </div>
 
         <input
@@ -323,10 +323,10 @@ export default function AnalyticsPage() {
                   <Line
                     type="monotone"
                     dataKey="posts"
-                    stroke="#128C7E"
+                    stroke="#2E5E99"
                     strokeWidth={2.5}
-                    dot={{ fill: "#128C7E", r: 3, strokeWidth: 0 }}
-                    activeDot={{ r: 5, fill: "#128C7E", strokeWidth: 0 }}
+                    dot={{ fill: "#2E5E99", r: 3, strokeWidth: 0 }}
+                    activeDot={{ r: 5, fill: "#2E5E99", strokeWidth: 0 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -365,7 +365,7 @@ export default function AnalyticsPage() {
                   <Tooltip content={<NmTooltip />} />
                   <Bar
                     dataKey="posts"
-                    fill="#128C7E"
+                    fill="#2E5E99"
                     radius={[6, 6, 0, 0]}
                   />
                 </BarChart>

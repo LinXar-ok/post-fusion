@@ -36,8 +36,8 @@ function ProductPreview() {
   return (
     <div className="relative w-full h-full flex items-center justify-center p-12 overflow-hidden">
       {/* Background glow orbs */}
-      <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-[#128C7E]/15 blur-[80px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full bg-[#128C7E]/10 blur-[60px] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-[#2E5E99]/15 blur-[80px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full bg-[#2E5E99]/10 blur-[60px] pointer-events-none" />
 
       {/* Card grid */}
       <div className="relative w-full max-w-sm space-y-4">
@@ -47,9 +47,9 @@ function ProductPreview() {
           <FloatCard delay={0.1} className="flex flex-col gap-3">
             <div
               className="w-8 h-8 rounded-xl flex items-center justify-center"
-              style={{ background: "rgba(18,140,126,0.15)", boxShadow: "var(--nm-inset-sm)" }}
+              style={{ background: "rgba(46,94,153,0.15)", boxShadow: "var(--nm-inset-sm)" }}
             >
-              <BarChart3 className="w-4 h-4 text-[#128C7E]" />
+              <BarChart3 className="w-4 h-4 text-[#2E5E99]" />
             </div>
             <div>
               <p className="font-display text-2xl font-bold text-foreground leading-none">48</p>
@@ -84,11 +84,11 @@ function ProductPreview() {
                 <div
                   className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0"
                   style={{
-                    background: item.ok ? "rgba(18,140,126,0.15)" : "rgba(245,158,11,0.15)",
+                    background: item.ok ? "rgba(46,94,153,0.15)" : "rgba(245,158,11,0.15)",
                     boxShadow: "var(--nm-inset-sm)",
                   }}
                 >
-                  <CheckCircle className="w-3 h-3" style={{ color: item.ok ? "#128C7E" : "#F59E0B" }} />
+                  <CheckCircle className="w-3 h-3" style={{ color: item.ok ? "#2E5E99" : "#F59E0B" }} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs text-foreground truncate">{item.label}</p>
@@ -122,7 +122,7 @@ function ProductPreview() {
         >
           &ldquo;The most intuitive way to orchestrate social growth.&rdquo;
           <br />
-          <span className="font-semibold text-[#128C7E]">— Sarah Jenkins, Marketing Director</span>
+          <span className="font-semibold text-[#2E5E99]">— Sarah Jenkins, Marketing Director</span>
         </motion.p>
       </div>
     </div>
@@ -140,7 +140,7 @@ export default function LoginPage() {
       <div className="flex-1 lg:flex-none lg:w-[480px] flex flex-col justify-center px-8 sm:px-12 lg:px-16 py-12 relative z-10">
 
         {/* Ambient glow */}
-        <div className="absolute top-0 left-0 w-72 h-72 rounded-full bg-[#128C7E]/8 blur-[100px] pointer-events-none" />
+        <div className="absolute top-0 left-0 w-72 h-72 rounded-full bg-[#2E5E99]/8 blur-[100px] pointer-events-none" />
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -151,7 +151,7 @@ export default function LoginPage() {
           {/* Logo */}
           <div className="flex items-center gap-3 mb-10">
             <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center bg-[#128C7E]"
+              className="w-10 h-10 rounded-xl flex items-center justify-center bg-[#2E5E99]"
               style={{ boxShadow: "var(--nm-raised-sm)" }}
             >
               <Sparkles className="w-5 h-5 text-white" />
@@ -170,7 +170,7 @@ export default function LoginPage() {
               Don&apos;t have an account?{" "}
               <Link
                 href="/register"
-                className="font-semibold text-[#128C7E] hover:underline transition-colors"
+                className="font-semibold text-[#2E5E99] hover:underline transition-colors"
               >
                 Create one free
               </Link>
@@ -214,7 +214,7 @@ export default function LoginPage() {
                   <label htmlFor="password" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                     Password
                   </label>
-                  <Link href="#" className="text-xs font-medium text-[#128C7E] hover:underline">
+                  <Link href="#" className="text-xs font-medium text-[#2E5E99] hover:underline">
                     Forgot password?
                   </Link>
                 </div>
@@ -231,7 +231,7 @@ export default function LoginPage() {
               {/* Submit */}
               <button
                 type="submit"
-                className="w-full h-11 rounded-xl text-sm font-semibold text-white bg-[#128C7E] flex items-center justify-center gap-2 group transition-all mt-2"
+                className="w-full h-11 rounded-xl text-sm font-semibold text-white bg-[#2E5E99] flex items-center justify-center gap-2 group transition-all mt-2"
                 style={{ boxShadow: "var(--nm-raised-sm)" }}
               >
                 Sign In
@@ -243,7 +243,7 @@ export default function LoginPage() {
           {/* Bottom register link */}
           <p className="mt-6 text-center text-sm text-muted-foreground">
             New to LinXar?{" "}
-            <Link href="/register" className="font-semibold text-[#128C7E] hover:underline">
+            <Link href="/register" className="font-semibold text-[#2E5E99] hover:underline">
               Create your account
             </Link>
           </p>
@@ -255,7 +255,7 @@ export default function LoginPage() {
         {/* Vertical separator */}
         <div
           className="absolute left-0 top-0 bottom-0 w-px"
-          style={{ background: "linear-gradient(to bottom, transparent, rgba(18,140,126,0.25), transparent)" }}
+          style={{ background: "linear-gradient(to bottom, transparent, rgba(46,94,153,0.25), transparent)" }}
         />
         <ProductPreview />
       </div>

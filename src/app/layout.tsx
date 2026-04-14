@@ -31,7 +31,7 @@ export default function RootLayout({
       className={`h-full antialiased ${spaceGrotesk.variable} ${ibmPlexSans.variable}`}
       suppressHydrationWarning
     >
-      <body className="min-h-full bg-background text-foreground selection:bg-[#128C7E]/30 font-sans">
+      <body className="min-h-full bg-background text-foreground selection:bg-[#2E5E99]/30 font-sans">
         <ThemeProvider attribute="class" defaultTheme="light">
           {children}
         </ThemeProvider>

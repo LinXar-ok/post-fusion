@@ -34,8 +34,8 @@ function FloatCard({
 const features = [
   {
     icon: PenSquare,
-    color: "#128C7E",
-    bg: "rgba(18,140,126,0.15)",
+    color: "#2E5E99",
+    bg: "rgba(46,94,153,0.15)",
     title: "Multi-platform publishing",
     desc: "LinkedIn, X, Facebook — one compose window.",
   },
@@ -67,7 +67,7 @@ function FeatureShowcase() {
   return (
     <div className="relative w-full h-full flex items-center justify-center p-12 overflow-hidden">
       {/* Glow orbs */}
-      <div className="absolute top-1/3 right-1/4 w-72 h-72 rounded-full bg-[#128C7E]/12 blur-[90px] pointer-events-none" />
+      <div className="absolute top-1/3 right-1/4 w-72 h-72 rounded-full bg-[#2E5E99]/12 blur-[90px] pointer-events-none" />
       <div className="absolute bottom-1/4 left-1/3 w-52 h-52 rounded-full bg-indigo-500/8 blur-[70px] pointer-events-none" />
 
       <div className="relative w-full max-w-sm space-y-4">
@@ -78,7 +78,7 @@ function FeatureShowcase() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="w-12 h-12 rounded-2xl bg-[#128C7E] flex items-center justify-center mx-auto mb-3"
+            className="w-12 h-12 rounded-2xl bg-[#2E5E99] flex items-center justify-center mx-auto mb-3"
             style={{ boxShadow: "var(--nm-raised-sm)" }}
           >
             <Sparkles className="w-6 h-6 text-white" />
@@ -117,7 +117,7 @@ function FeatureShowcase() {
           className="text-center"
         >
           <p className="text-xs text-muted-foreground">
-            Trusted by <span className="font-semibold text-[#128C7E]">2,400+</span> creators worldwide
+            Trusted by <span className="font-semibold text-[#2E5E99]">2,400+</span> creators worldwide
           </p>
         </motion.div>
       </div>
@@ -136,7 +136,7 @@ export default function RegisterPage() {
       <div className="flex-1 lg:flex-none lg:w-[480px] flex flex-col justify-center px-8 sm:px-12 lg:px-16 py-12 relative z-10">
 
         {/* Ambient glow */}
-        <div className="absolute top-0 right-0 w-72 h-72 rounded-full bg-[#128C7E]/8 blur-[100px] pointer-events-none" />
+        <div className="absolute top-0 right-0 w-72 h-72 rounded-full bg-[#2E5E99]/8 blur-[100px] pointer-events-none" />
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -147,7 +147,7 @@ export default function RegisterPage() {
           {/* Logo */}
           <div className="flex items-center gap-3 mb-10">
             <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center bg-[#128C7E]"
+              className="w-10 h-10 rounded-xl flex items-center justify-center bg-[#2E5E99]"
               style={{ boxShadow: "var(--nm-raised-sm)" }}
             >
               <Sparkles className="w-5 h-5 text-white" />
@@ -166,7 +166,7 @@ export default function RegisterPage() {
               Already have an account?{" "}
               <Link
                 href="/login"
-                className="font-semibold text-[#128C7E] hover:underline transition-colors"
+                className="font-semibold text-[#2E5E99] hover:underline transition-colors"
               >
                 Sign in here
               </Link>
@@ -238,7 +238,7 @@ export default function RegisterPage() {
               {/* Submit */}
               <button
                 type="submit"
-                className="w-full h-11 rounded-xl text-sm font-semibold text-white bg-[#128C7E] flex items-center justify-center gap-2 group transition-all mt-2"
+                className="w-full h-11 rounded-xl text-sm font-semibold text-white bg-[#2E5E99] flex items-center justify-center gap-2 group transition-all mt-2"
                 style={{ boxShadow: "var(--nm-raised-sm)" }}
               >
                 Create Account
@@ -247,9 +247,9 @@ export default function RegisterPage() {
 
               <p className="text-[10px] text-center text-muted-foreground">
                 By signing up you agree to our{" "}
-                <Link href="#" className="text-[#128C7E] hover:underline">Terms of Service</Link>
+                <Link href="#" className="text-[#2E5E99] hover:underline">Terms of Service</Link>
                 {" "}and{" "}
-                <Link href="#" className="text-[#128C7E] hover:underline">Privacy Policy</Link>
+                <Link href="#" className="text-[#2E5E99] hover:underline">Privacy Policy</Link>
               </p>
             </form>
           </div>
@@ -257,7 +257,7 @@ export default function RegisterPage() {
           {/* Bottom login link */}
           <p className="mt-6 text-center text-sm text-muted-foreground">
             Already have an account?{" "}
-            <Link href="/login" className="font-semibold text-[#128C7E] hover:underline">
+            <Link href="/login" className="font-semibold text-[#2E5E99] hover:underline">
               Sign in
             </Link>
           </p>
@@ -269,7 +269,7 @@ export default function RegisterPage() {
         {/* Vertical separator */}
         <div
           className="absolute right-0 top-0 bottom-0 w-px"
-          style={{ background: "linear-gradient(to bottom, transparent, rgba(18,140,126,0.25), transparent)" }}
+          style={{ background: "linear-gradient(to bottom, transparent, rgba(46,94,153,0.25), transparent)" }}
         />
         <FeatureShowcase />
       </div>

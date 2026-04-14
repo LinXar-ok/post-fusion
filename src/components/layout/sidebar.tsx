@@ -37,12 +37,12 @@ export function Sidebar() {
           style={{ boxShadow: "var(--nm-raised-sm)" }}
         >
           <div
-            className="w-7 h-7 rounded-lg bg-[#128C7E] flex items-center justify-center shrink-0"
+            className="w-7 h-7 rounded-lg bg-[#2E5E99] flex items-center justify-center shrink-0"
             style={{ boxShadow: "var(--nm-inset-sm)" }}
           >
             <Sparkles className="w-3.5 h-3.5 text-white" />
           </div>
-          <span className="font-display text-sm font-bold tracking-tight text-[#0B1020] dark:text-foreground leading-none">
+          <span className="font-display text-sm font-bold tracking-tight text-[#0D2440] dark:text-foreground leading-none">
             LinXar Ops
           </span>
         </div>
@@ -59,8 +59,8 @@ export function Sidebar() {
               className={cn(
                 "flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all duration-200 bg-[var(--nm-bg)]",
                 active
-                  ? "text-[#128C7E]"
-                  : "text-slate-500 dark:text-slate-400 hover:text-[#0B1020] dark:hover:text-foreground"
+                  ? "text-[#2E5E99]"
+                  : "text-slate-500 dark:text-slate-400 hover:text-[#0D2440] dark:hover:text-foreground"
               )}
               style={{
                 boxShadow: active ? "var(--nm-inset-sm)" : undefined,
@@ -69,12 +69,12 @@ export function Sidebar() {
               <item.icon
                 className={cn(
                   "h-4 w-4 shrink-0 transition-colors",
-                  active ? "text-[#128C7E]" : "text-slate-400 dark:text-slate-500"
+                  active ? "text-[#2E5E99]" : "text-slate-400 dark:text-slate-500"
                 )}
               />
               <span>{item.name}</span>
               {active && (
-                <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[#128C7E] shrink-0 nm-pulse" />
+                <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[#2E5E99] shrink-0 nm-pulse" />
               )}
             </Link>
           );
@@ -85,7 +85,7 @@ export function Sidebar() {
       <div
         className="h-px mx-5 mb-5"
         style={{
-          background: "linear-gradient(to right, transparent, rgba(18,140,126,0.4), transparent)",
+          background: "linear-gradient(to right, transparent, rgba(46,94,153,0.4), transparent)",
         }}
       />
     </aside>

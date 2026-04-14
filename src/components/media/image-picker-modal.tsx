@@ -77,7 +77,7 @@ export function ImagePickerModal({
           >
             <div className="flex items-center justify-between p-5 border-b border-slate-100">
               <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                <ImageIcon className="w-5 h-5 text-[#128C7E]" />
+                <ImageIcon className="w-5 h-5 text-[#2E5E99]" />
                 Choose an image
               </h3>
               <Button
@@ -95,7 +95,7 @@ export function ImagePickerModal({
                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                 <Input
                   placeholder="Search images..."
-                  className="pl-9 bg-slate-50 border-slate-200 h-9 text-sm rounded-lg focus-visible:ring-[#128C7E]"
+                  className="pl-9 bg-slate-50 border-slate-200 h-9 text-sm rounded-lg focus-visible:ring-[#2E5E99]"
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                 />
@@ -105,7 +105,7 @@ export function ImagePickerModal({
             <div className="overflow-y-auto flex-1 p-4">
               {loading ? (
                 <div className="flex items-center justify-center py-12">
-                  <Loader2 className="w-6 h-6 text-[#128C7E] animate-spin" />
+                  <Loader2 className="w-6 h-6 text-[#2E5E99] animate-spin" />
                 </div>
               ) : (
                 <div className="grid grid-cols-3 gap-3">
@@ -115,7 +115,7 @@ export function ImagePickerModal({
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.9 }}
-                      className="aspect-square rounded-lg overflow-hidden border-2 border-slate-200 hover:border-[#128C7E] transition-all shadow-sm"
+                      className="aspect-square rounded-lg overflow-hidden border-2 border-slate-200 hover:border-[#2E5E99] transition-all shadow-sm"
                       onClick={() => handleSelect(file)}
                     >
                       {userId ? (

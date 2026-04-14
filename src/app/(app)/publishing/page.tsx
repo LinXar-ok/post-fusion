@@ -256,10 +256,10 @@ export default function PublishingPage() {
             className="mb-5 flex items-center gap-3 px-4 py-3 rounded-xl shrink-0 bg-[var(--nm-bg)]"
             style={{ boxShadow: "var(--nm-raised-sm)" }}
           >
-            <div className={cn("w-1 h-8 rounded-full shrink-0", status === "error" ? "bg-rose-500" : "bg-[#128C7E]")} />
+            <div className={cn("w-1 h-8 rounded-full shrink-0", status === "error" ? "bg-rose-500" : "bg-[#2E5E99]")} />
             {status === "error"
               ? <AlertCircle className="w-4 h-4 text-rose-500 shrink-0" />
-              : <CheckCircle2 className="w-4 h-4 text-[#128C7E] shrink-0" />
+              : <CheckCircle2 className="w-4 h-4 text-[#2E5E99] shrink-0" />
             }
             <p className="text-sm font-medium text-foreground">{feedbackMsg}</p>
           </motion.div>
@@ -305,7 +305,7 @@ export default function PublishingPage() {
             {/* Teal accent divider */}
             <div
               className="h-px mx-6 mb-5"
-              style={{ background: "linear-gradient(to right, transparent, rgba(18,140,126,0.35), transparent)" }}
+              style={{ background: "linear-gradient(to right, transparent, rgba(46,94,153,0.35), transparent)" }}
             />
 
             <div className="px-6 pb-6 space-y-4">
@@ -352,7 +352,7 @@ export default function PublishingPage() {
                       style={{ boxShadow: "var(--nm-raised-sm)" }}
                     >
                       <div className="flex items-center justify-between flex-wrap gap-2">
-                        <p className="text-xs font-bold text-[#128C7E] uppercase tracking-wider flex items-center gap-1.5">
+                        <p className="text-xs font-bold text-[#2E5E99] uppercase tracking-wider flex items-center gap-1.5">
                           <Sparkles className="w-3.5 h-3.5" /> AI Assistant
                         </p>
                         <div className="flex gap-1.5">
@@ -368,11 +368,11 @@ export default function PublishingPage() {
                               {aiLoading && aiType === t ? (
                                 <Loader2 className="w-3 h-3 animate-spin" />
                               ) : t === "improve" ? (
-                                <WandSparkles className="w-3 h-3 text-[#128C7E]" />
+                                <WandSparkles className="w-3 h-3 text-[#2E5E99]" />
                               ) : t === "hashtags" ? (
-                                <Hash className="w-3 h-3 text-[#128C7E]" />
+                                <Hash className="w-3 h-3 text-[#2E5E99]" />
                               ) : (
-                                <Sparkles className="w-3 h-3 text-[#128C7E]" />
+                                <Sparkles className="w-3 h-3 text-[#2E5E99]" />
                               )}
                               {t === "improve" ? "Improve" : t === "hashtags" ? "Hashtags" : "Suggest"}
                             </button>
@@ -381,7 +381,7 @@ export default function PublishingPage() {
                       </div>
 
                       {aiLoading && (
-                        <div className="flex items-center gap-2 text-[#128C7E] text-xs">
+                        <div className="flex items-center gap-2 text-[#2E5E99] text-xs">
                           <Loader2 className="w-3.5 h-3.5 animate-spin" /> Generating…
                         </div>
                       )}
@@ -396,7 +396,7 @@ export default function PublishingPage() {
                             <button
                               type="button"
                               onClick={applyAIResult}
-                              className="h-7 px-3 rounded-lg text-xs font-semibold bg-[#128C7E] text-white transition-all hover:bg-[#0e7066]"
+                              className="h-7 px-3 rounded-lg text-xs font-semibold bg-[#2E5E99] text-white transition-all hover:bg-[#0e7066]"
                               style={{ boxShadow: "var(--nm-raised-xs)" }}
                             >
                               Apply to Post
@@ -500,13 +500,13 @@ export default function PublishingPage() {
                   <ToolBtn onClick={() => setShowImagePicker(true)} title="Choose from library">
                     <FolderOpen className="w-4 h-4" />
                   </ToolBtn>
-                  <ToolBtn onClick={() => setShowMetadata(!showMetadata)} active={showMetadata} title="Hashtags" activeColor="#128C7E">
+                  <ToolBtn onClick={() => setShowMetadata(!showMetadata)} active={showMetadata} title="Hashtags" activeColor="#2E5E99">
                     <Hash className="w-4 h-4" />
                   </ToolBtn>
-                  <ToolBtn onClick={() => setShowMetadata(!showMetadata)} active={showMetadata} title="Tone" activeColor="#128C7E">
+                  <ToolBtn onClick={() => setShowMetadata(!showMetadata)} active={showMetadata} title="Tone" activeColor="#2E5E99">
                     <Smile className="w-4 h-4" />
                   </ToolBtn>
-                  <ToolBtn onClick={() => setShowAI(!showAI)} active={showAI} title="AI Assistant" activeColor="#128C7E">
+                  <ToolBtn onClick={() => setShowAI(!showAI)} active={showAI} title="AI Assistant" activeColor="#2E5E99">
                     <Sparkles className="w-4 h-4" />
                   </ToolBtn>
 
@@ -560,7 +560,7 @@ export default function PublishingPage() {
                     "h-10 px-8 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all disabled:opacity-50",
                     isScheduled
                       ? "bg-amber-500 text-white hover:bg-amber-600"
-                      : "bg-[#128C7E] text-white hover:bg-[#0e7066]"
+                      : "bg-[#2E5E99] text-white hover:bg-[#0e7066]"
                   )}
                   style={{ boxShadow: "var(--nm-raised-sm)" }}
                 >
@@ -630,7 +630,7 @@ export default function PublishingPage() {
                     <div>
                       <div className="flex items-center justify-between mb-3">
                         <span className="text-xs font-medium text-muted-foreground">
-                          <span className="text-[#128C7E] font-semibold">{csvParsed.filter(r => !r.error).length} valid</span>
+                          <span className="text-[#2E5E99] font-semibold">{csvParsed.filter(r => !r.error).length} valid</span>
                           {csvParsed.filter(r => !!r.error).length > 0 && (
                             <> · <span className="text-rose-500 font-semibold">{csvParsed.filter(r => !!r.error).length} invalid</span></>
                           )}
@@ -658,7 +658,7 @@ export default function PublishingPage() {
                                 <td className="p-2">
                                   {r.error
                                     ? <span className="text-[10px] font-semibold text-rose-500">{r.error}</span>
-                                    : <span className="text-[10px] font-semibold text-[#128C7E]">Valid</span>
+                                    : <span className="text-[10px] font-semibold text-[#2E5E99]">Valid</span>
                                   }
                                 </td>
                               </tr>
@@ -702,7 +702,7 @@ export default function PublishingPage() {
                         className="w-12 h-12 rounded-2xl flex items-center justify-center mb-3 bg-[var(--nm-bg)]"
                         style={{ boxShadow: "var(--nm-inset-sm)" }}
                       >
-                        <CheckCircle2 className="w-6 h-6 text-[#128C7E]" />
+                        <CheckCircle2 className="w-6 h-6 text-[#2E5E99]" />
                       </div>
                       <p className="text-sm font-semibold text-foreground mb-1">Posts scheduled!</p>
                       <p className="text-xs text-muted-foreground">The cron job will pick them up at their scheduled times.</p>
@@ -767,7 +767,7 @@ export default function PublishingPage() {
                   className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 bg-[var(--nm-bg)]"
                   style={{ boxShadow: "var(--nm-raised-sm)" }}
                 >
-                  <span className="text-[#128C7E] font-bold text-xs">You</span>
+                  <span className="text-[#2E5E99] font-bold text-xs">You</span>
                 </div>
                 <div>
                   <p className="text-xs font-bold text-foreground leading-none">Your Brand</p>
@@ -787,7 +787,7 @@ export default function PublishingPage() {
                   )}
                 </p>
                 {hashtagsInput && (
-                  <p className="text-[#128C7E] text-[12px] mt-2.5 font-medium">
+                  <p className="text-[#2E5E99] text-[12px] mt-2.5 font-medium">
                     {hashtagsInput.split(",").map(t => `#${t.trim().replace(/^#/, "")}`).join(" ")}
                   </p>
                 )}

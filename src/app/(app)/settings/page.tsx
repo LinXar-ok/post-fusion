@@ -131,7 +131,7 @@ export default async function SettingsPage() {
             {/* Divider */}
             <div
               className="mx-6 h-px"
-              style={{ background: "linear-gradient(to right, transparent, rgba(18,140,126,0.2), transparent)" }}
+              style={{ background: "linear-gradient(to right, transparent, rgba(46,94,153,0.2), transparent)" }}
             />
 
             {/* Card footer */}
@@ -148,10 +148,10 @@ export default async function SettingsPage() {
               <form action={p.action} method="GET">
                 <button
                   type="submit"
-                  className="h-9 px-5 rounded-xl text-sm font-semibold flex items-center gap-2 bg-[var(--nm-bg)] text-foreground transition-all hover:text-[#128C7E]"
+                  className="h-9 px-5 rounded-xl text-sm font-semibold flex items-center gap-2 bg-[var(--nm-bg)] text-foreground transition-all hover:text-[#2E5E99]"
                   style={{ boxShadow: "var(--nm-raised-sm)" }}
                 >
-                  <Plug className="w-3.5 h-3.5 text-[#128C7E]" />
+                  <Plug className="w-3.5 h-3.5 text-[#2E5E99]" />
                   {p.isConnected ? p.reconnectLabel : p.connectLabel}
                 </button>
               </form>

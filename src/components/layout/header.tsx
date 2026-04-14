@@ -45,7 +45,7 @@ export async function Header() {
         <ThemeToggle />
 
         <button
-          className="w-9 h-9 rounded-xl flex items-center justify-center text-muted-foreground hover:text-[#128C7E] transition-colors duration-200 bg-[var(--nm-bg)]"
+          className="w-9 h-9 rounded-xl flex items-center justify-center text-muted-foreground hover:text-[#2E5E99] transition-colors duration-200 bg-[var(--nm-bg)]"
           style={{ boxShadow: "var(--nm-raised-sm)" }}
           aria-label="Notifications"
         >
@@ -64,7 +64,7 @@ export async function Header() {
                   src={user.user_metadata?.avatar_url || ""}
                   alt={user.user_metadata?.name || "User"}
                 />
-                <AvatarFallback className="bg-[#128C7E]/15 text-[#128C7E] font-semibold text-xs">
+                <AvatarFallback className="bg-[#2E5E99]/15 text-[#2E5E99] font-semibold text-xs">
                   {user.user_metadata?.name?.charAt(0) || "U"}
                 </AvatarFallback>
               </Avatar>
@@ -74,7 +74,7 @@ export async function Header() {
           <Link href="/login">
             <Button
               size="sm"
-              className="rounded-xl bg-[#128C7E] text-white hover:bg-[#0e7066] shadow-none transition-all"
+              className="rounded-xl bg-[#2E5E99] text-white hover:bg-[#0e7066] shadow-none transition-all"
               style={{ boxShadow: "var(--nm-raised-sm)" }}
             >
               <LogIn className="h-4 w-4 mr-1.5" /> Sign In

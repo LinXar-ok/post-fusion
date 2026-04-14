@@ -121,7 +121,7 @@ export default function MediaLibraryPage() {
             type="button"
             onClick={() => inputRef?.click()}
             disabled={uploading}
-            className="h-9 px-5 rounded-xl text-sm font-semibold flex items-center gap-2 text-white bg-[#128C7E] disabled:opacity-60 transition-all"
+            className="h-9 px-5 rounded-xl text-sm font-semibold flex items-center gap-2 text-white bg-[#2E5E99] disabled:opacity-60 transition-all"
             style={{ boxShadow: "var(--nm-raised-sm)" }}
           >
             {uploading
@@ -141,9 +141,9 @@ export default function MediaLibraryPage() {
           <div className="flex items-center gap-2">
             <div
               className="w-8 h-8 rounded-xl flex items-center justify-center bg-[var(--nm-bg)]"
-              style={{ background: "rgba(18,140,126,0.12)", boxShadow: "var(--nm-inset-sm)" }}
+              style={{ background: "rgba(46,94,153,0.12)", boxShadow: "var(--nm-inset-sm)" }}
             >
-              <ImageIcon className="w-4 h-4 text-[#128C7E]" />
+              <ImageIcon className="w-4 h-4 text-[#2E5E99]" />
             </div>
             <span className="text-sm font-semibold text-foreground">
               {files.length} image{files.length !== 1 ? "s" : ""}
@@ -172,7 +172,7 @@ export default function MediaLibraryPage() {
                 className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4 bg-[var(--nm-bg)]"
                 style={{ boxShadow: "var(--nm-inset-sm)" }}
               >
-                <Loader2 className="w-6 h-6 text-[#128C7E] animate-spin" />
+                <Loader2 className="w-6 h-6 text-[#2E5E99] animate-spin" />
               </div>
               <p className="text-sm text-muted-foreground">Loading media…</p>
             </div>

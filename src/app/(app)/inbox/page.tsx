@@ -112,7 +112,7 @@ export default function InboxPage() {
           <p className="text-xs text-muted-foreground leading-relaxed">
             To receive live messages, configure platform webhooks in your developer apps pointing to{" "}
             <code
-              className="rounded-lg px-1.5 py-0.5 text-[#128C7E] font-mono bg-[var(--nm-bg)]"
+              className="rounded-lg px-1.5 py-0.5 text-[#2E5E99] font-mono bg-[var(--nm-bg)]"
               style={{ boxShadow: "var(--nm-inset-sm)" }}
             >
               yourdomain.com/api/webhooks/inbox?platform=PLATFORM
@@ -150,7 +150,7 @@ export default function InboxPage() {
                 type="button"
                 onClick={loadMessages}
                 disabled={loading}
-                className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-[var(--nm-bg)] text-muted-foreground transition-all hover:text-[#128C7E]"
+                className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-[var(--nm-bg)] text-muted-foreground transition-all hover:text-[#2E5E99]"
                 style={{ boxShadow: "var(--nm-raised-xs)" }}
                 title="Refresh"
               >
@@ -168,7 +168,7 @@ export default function InboxPage() {
                   className="h-7 px-3 rounded-full text-xs font-semibold shrink-0 text-foreground bg-[var(--nm-bg)] transition-all"
                   style={{
                     boxShadow: filter === opt.value ? "var(--nm-inset-sm)" : "var(--nm-raised-xs)",
-                    color: filter === opt.value ? "#128C7E" : undefined,
+                    color: filter === opt.value ? "#2E5E99" : undefined,
                   }}
                 >
                   {opt.label}
@@ -181,7 +181,7 @@ export default function InboxPage() {
               <button
                 type="button"
                 onClick={handleMarkAllRead}
-                className="text-xs font-semibold text-[#128C7E] text-left hover:underline"
+                className="text-xs font-semibold text-[#2E5E99] text-left hover:underline"
               >
                 Mark all as read
               </button>
@@ -216,7 +216,7 @@ export default function InboxPage() {
                     <div className="flex items-start justify-between gap-2 mb-1.5">
                       <div className="flex items-center gap-2 min-w-0">
                         {!msg.is_read && (
-                          <div className="w-2 h-2 rounded-full bg-[#128C7E] shrink-0" style={{ boxShadow: "0 0 0 3px rgba(18,140,126,0.15)" }} />
+                          <div className="w-2 h-2 rounded-full bg-[#2E5E99] shrink-0" style={{ boxShadow: "0 0 0 3px rgba(46,94,153,0.15)" }} />
                         )}
                         <span className={`text-sm font-semibold truncate ${msg.is_read ? "text-muted-foreground" : "text-foreground"}`}>
                           {msg.sender_name}
@@ -251,8 +251,8 @@ export default function InboxPage() {
                 className="h-16 px-6 flex items-center gap-3 shrink-0 border-b border-[rgba(163,177,198,0.15)]"
               >
                 <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-[#128C7E] bg-[var(--nm-bg)] shrink-0"
-                  style={{ boxShadow: "var(--nm-inset-sm)", background: "rgba(18,140,126,0.1)" }}
+                  className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-[#2E5E99] bg-[var(--nm-bg)] shrink-0"
+                  style={{ boxShadow: "var(--nm-inset-sm)", background: "rgba(46,94,153,0.1)" }}
                 >
                   {selectedMsg.sender_name.charAt(0).toUpperCase()}
                 </div>
@@ -302,7 +302,7 @@ export default function InboxPage() {
                   <button
                     type="button"
                     disabled={!replyText.trim()}
-                    className="absolute right-1.5 w-9 h-9 rounded-xl flex items-center justify-center bg-[#128C7E] text-white transition-all disabled:opacity-40"
+                    className="absolute right-1.5 w-9 h-9 rounded-xl flex items-center justify-center bg-[#2E5E99] text-white transition-all disabled:opacity-40"
                     style={{ boxShadow: "var(--nm-raised-sm)" }}
                   >
                     <Send className="w-4 h-4 ml-0.5" />

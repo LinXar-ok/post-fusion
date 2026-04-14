@@ -31,7 +31,7 @@ const staggerItem: Variants = {
 }
 
 const statMeta = [
-  { color: "#128C7E", bg: "rgba(18,140,126,0.12)" },
+  { color: "#2E5E99", bg: "rgba(46,94,153,0.12)" },
   { color: "#F59E0B", bg: "rgba(245,158,11,0.12)" },
   { color: "#6366F1", bg: "rgba(99,102,241,0.12)" },
   { color: "#F43F5E", bg: "rgba(244,63,94,0.12)" },
@@ -159,7 +159,7 @@ export default function Dashboard() {
                 className="w-12 h-12 rounded-2xl flex items-center justify-center mb-3 bg-[var(--nm-bg)]"
                 style={{ boxShadow: "var(--nm-inset-sm)" }}
               >
-                <BarChart3 className="w-5 h-5 text-[#128C7E]" />
+                <BarChart3 className="w-5 h-5 text-[#2E5E99]" />
               </div>
               <p className="text-sm font-medium text-foreground mb-1">No data yet</p>
               <p className="text-xs text-muted-foreground">Publish your first post to see activity.</p>
@@ -169,7 +169,7 @@ export default function Dashboard() {
               {days.map((day, i) => (
                 <div key={i} className="flex-1 flex flex-col items-center gap-2">
                   {/* Count label */}
-                  <span className="text-[10px] font-bold text-[#128C7E] h-4 flex items-center">
+                  <span className="text-[10px] font-bold text-[#2E5E99] h-4 flex items-center">
                     {dayCounts[i] > 0 ? dayCounts[i] : ""}
                   </span>
 
@@ -182,7 +182,7 @@ export default function Dashboard() {
                     <motion.div
                       className="absolute bottom-0 left-0 right-0 rounded-xl"
                       style={{
-                        background: `linear-gradient(to top, #128C7E, rgba(18,140,126,0.5))`,
+                        background: `linear-gradient(to top, #2E5E99, rgba(46,94,153,0.5))`,
                       }}
                       initial={{ height: "0%" }}
                       animate={{ height: `${(dayCounts[i] / maxCount) * 100}%` }}
@@ -232,14 +232,14 @@ export default function Dashboard() {
                     {i !== recentPosts.length - 1 && (
                       <div
                         className="absolute top-5 bottom-[-1.25rem] left-[5px] w-px"
-                        style={{ background: "linear-gradient(to bottom, rgba(18,140,126,0.3), transparent)" }}
+                        style={{ background: "linear-gradient(to bottom, rgba(46,94,153,0.3), transparent)" }}
                       />
                     )}
 
                     {/* Dot */}
                     <div
-                      className="w-3 h-3 rounded-full mt-1 shrink-0 bg-[#128C7E]"
-                      style={{ boxShadow: "0 0 0 4px rgba(18,140,126,0.12)" }}
+                      className="w-3 h-3 rounded-full mt-1 shrink-0 bg-[#2E5E99]"
+                      style={{ boxShadow: "0 0 0 4px rgba(46,94,153,0.12)" }}
                     />
 
                     <div className="flex-1 min-w-0 space-y-1.5">
