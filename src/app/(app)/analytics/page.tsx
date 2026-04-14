@@ -2,20 +2,14 @@
 
 import { useState, useEffect, useRef } from "react"
 import { createClient } from "@/lib/supabase/client"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { TrendingUp, CheckCircle2, Clock, AlertTriangle, FileText, Download, ChevronDown, Calendar } from "lucide-react"
+import {
+  TrendingUp, CheckCircle2, Clock, AlertTriangle,
+  FileText, Download, ChevronDown, Calendar,
+} from "lucide-react"
 import { exportCSV, buildReportTitle } from "@/lib/report-export"
 import {
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  LineChart,
-  Line,
+  ResponsiveContainer, BarChart, Bar, XAxis, YAxis,
+  CartesianGrid, Tooltip, LineChart, Line,
 } from "recharts"
 
 type Post = {
@@ -49,11 +43,36 @@ function getWeeklyData(posts: Post[]) {
 function getPlatformData(posts: Post[]) {
   return ["LinkedIn", "X", "Facebook", "Instagram"].map(name => ({
     platform: name,
-    posts: posts.filter(p => p.platforms?.includes(name.toLowerCase() === "x" ? "x" : name.toLowerCase())).length,
+    posts: posts.filter(p =>
+      p.platforms?.includes(name.toLowerCase() === "x" ? "x" : name.toLowerCase())
+    ).length,
   }))
 }
 
-type Datum = { platform: string; posts: number }
+// Custom recharts tooltip styled to the nm surface
+function NmTooltip({ active, payload, label }: {
+  active?: boolean
+  payload?: { value: number }[]
+  label?: string
+}) {
+  if (!active || !payload?.length) return null
+  return (
+    <div
+      className="px-3 py-2 rounded-xl bg-[var(--nm-bg)] text-foreground text-xs font-semibold"
+      style={{ boxShadow: "var(--nm-raised-sm)" }}
+    >
+      <p className="text-muted-foreground font-medium mb-0.5">{label}</p>
+      <p style={{ color: "#128C7E" }}>{payload[0].value} posts</p>
+    </div>
+  )
+}
+
+const statMeta = [
+  { color: "#128C7E", bg: "rgba(18,140,126,0.12)"  },
+  { color: "#10B981", bg: "rgba(16,185,129,0.12)"  },
+  { color: "#F59E0B", bg: "rgba(245,158,11,0.12)"  },
+  { color: "#F43F5E", bg: "rgba(244,63,94,0.12)"   },
+]
 
 export default function AnalyticsPage() {
   const supabase = createClient()
@@ -62,6 +81,7 @@ export default function AnalyticsPage() {
   const [exportOpen, setExportOpen] = useState(false)
   const [dateStart, setDateStart] = useState("")
   const [dateEnd, setDateEnd] = useState("")
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     async function fetchData() {
@@ -78,34 +98,36 @@ export default function AnalyticsPage() {
     fetchData()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const filtered = posts.filter(p => {
-    const t = p.published_at ? new Date(p.published_at).getTime() : new Date(p.created_at).getTime()
-    const startMs = dateStart ? new Date(dateStart).getTime() : 0
-    const endMs = dateEnd ? new Date(dateEnd).getTime() : Infinity
-    return t >= startMs && t <= endMs
-  })
-
-  const published = filtered.filter(p => p.status === "published")
-  const scheduled = filtered.filter(p => p.status === "scheduled")
-  const failed = filtered.filter(p => p.status === "failed")
-  const weeklyData = getWeeklyData(filtered)
-  const platformData = getPlatformData(filtered)
-
-  const statCards = [
-    { title: "Total Posts", value: posts.length, icon: FileText, color: "teal" },
-    { title: "Published", value: published.length, icon: CheckCircle2, color: "emerald" },
-    { title: "Scheduled", value: scheduled.length, icon: Clock, color: "amber" },
-    { title: "Failed", value: failed.length, icon: AlertTriangle, color: "rose" },
-  ]
-
-  const dropdownRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     function handler(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) setExportOpen(false)
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node))
+        setExportOpen(false)
     }
     if (exportOpen) document.addEventListener("mousedown", handler)
     return () => document.removeEventListener("mousedown", handler)
   }, [exportOpen])
+
+  const filtered = posts.filter(p => {
+    const t = p.published_at
+      ? new Date(p.published_at).getTime()
+      : new Date(p.created_at).getTime()
+    const startMs = dateStart ? new Date(dateStart).getTime() : 0
+    const endMs   = dateEnd   ? new Date(dateEnd).getTime()   : Infinity
+    return t >= startMs && t <= endMs
+  })
+
+  const published  = filtered.filter(p => p.status === "published")
+  const scheduled  = filtered.filter(p => p.status === "scheduled")
+  const failed     = filtered.filter(p => p.status === "failed")
+  const weeklyData = getWeeklyData(filtered)
+  const platformData = getPlatformData(filtered)
+
+  const statCards = [
+    { title: "Total Posts", value: posts.length,      icon: FileText,      ...statMeta[0] },
+    { title: "Published",   value: published.length,  icon: CheckCircle2,  ...statMeta[1] },
+    { title: "Scheduled",   value: scheduled.length,  icon: Clock,         ...statMeta[2] },
+    { title: "Failed",      value: failed.length,     icon: AlertTriangle, ...statMeta[3] },
+  ]
 
   const handleExportCSV = () => {
     exportCSV(filtered, dateStart || null, dateEnd || null)
@@ -120,7 +142,12 @@ export default function AnalyticsPage() {
       <PDFReport
         posts={filtered}
         dateRange={buildReportTitle(dateStart || null, dateEnd || null)}
-        stats={{ total: filtered.length, published: published.length, scheduled: scheduled.length, failed: failed.length }}
+        stats={{
+          total: filtered.length,
+          published: published.length,
+          scheduled: scheduled.length,
+          failed: failed.length,
+        }}
         platformData={platformData}
       />
     )
@@ -135,136 +162,217 @@ export default function AnalyticsPage() {
     URL.revokeObjectURL(url)
   }
 
+  // Shared axis / grid props so charts look consistent
+  const axisProps = { tick: { fontSize: 10, fill: "#94a3b8" } }
+  const gridProps = { strokeDasharray: "3 3", stroke: "rgba(163,177,198,0.2)" }
+
   return (
-    <div className="p-6 md:p-8 lg:p-10 max-w-7xl mx-auto w-full relative z-10 h-full flex flex-col">
-      <div className="mb-8 shrink-0">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-2">Analytics</h1>
-            <p className="text-slate-500 text-lg">Detailed performance tracking and post breakdown.</p>
-          </div>
-          <div className="relative" ref={dropdownRef}>
-            <Button
-              variant="outline"
-              className="h-9 text-sm bg-white border-slate-200 hover:bg-slate-50 text-[#0B1020] font-semibold shadow-xs"
-              onClick={() => setExportOpen(!exportOpen)}
+    <div className="p-6 md:p-8 lg:p-10 max-w-7xl mx-auto w-full flex flex-col gap-7">
+
+      {/* Header */}
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="font-display text-3xl font-bold tracking-tight text-foreground mb-1">
+            Analytics
+          </h1>
+          <p className="text-muted-foreground text-sm">Detailed performance tracking and post breakdown.</p>
+        </div>
+
+        {/* Export dropdown */}
+        <div className="relative shrink-0" ref={dropdownRef}>
+          <button
+            type="button"
+            onClick={() => setExportOpen(!exportOpen)}
+            className="h-9 px-4 rounded-xl flex items-center gap-2 text-sm font-semibold text-foreground bg-[var(--nm-bg)] transition-all"
+            style={{ boxShadow: exportOpen ? "var(--nm-inset-sm)" : "var(--nm-raised-sm)" }}
+          >
+            <Download className="w-4 h-4 text-[#128C7E]" />
+            Export
+            <ChevronDown className={`w-3 h-3 text-muted-foreground transition-transform ${exportOpen ? "rotate-180" : ""}`} />
+          </button>
+
+          {exportOpen && (
+            <div
+              className="absolute right-0 mt-2 w-48 rounded-xl overflow-hidden z-50 bg-[var(--nm-bg)]"
+              style={{ boxShadow: "var(--nm-raised)" }}
             >
-              <Download className="w-4 h-4 mr-2" />
-              Export
-              <ChevronDown className="w-3 h-3 ml-1 text-slate-400" />
-            </Button>
-            {exportOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl border border-slate-200 shadow-lg z-50 overflow-hidden">
+              <div
+                className="h-px mx-3 mb-1 mt-1"
+                style={{ background: "linear-gradient(to right, transparent, rgba(18,140,126,0.3), transparent)" }}
+              />
+              {[
+                { label: "Export as CSV", icon: FileText, action: handleExportCSV },
+                { label: "Export as PDF", icon: Download, action: handleExportPDF },
+              ].map(({ label, icon: Icon, action }) => (
                 <button
-                  className="w-full px-4 py-2.5 text-sm text-left text-slate-700 hover:bg-[#128C7E]/5 flex items-center gap-2"
-                  onClick={handleExportCSV}
+                  key={label}
+                  type="button"
+                  onClick={action}
+                  className="w-full px-4 py-2.5 text-sm text-left text-foreground flex items-center gap-2.5 transition-all hover:text-[#128C7E]"
                 >
-                  <FileText className="w-4 h-4 text-[#128C7E]" /> Export as CSV
+                  <Icon className="w-4 h-4 text-[#128C7E] shrink-0" />
+                  {label}
                 </button>
-                <button
-                  className="w-full px-4 py-2.5 text-sm text-left text-slate-700 hover:bg-[#128C7E]/5 flex items-center gap-2"
-                  onClick={handleExportPDF}
-                >
-                  <Download className="w-4 h-4 text-[#128C7E]" /> Export as PDF
-                </button>
-              </div>
-            )}
-          </div>
+              ))}
+              <div className="h-1" />
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Date Range Filter */}
-      <div className="flex items-center gap-2 mb-6 shrink-0">
-        <Calendar className="w-4 h-4 text-slate-400" />
+      {/* Date range filter */}
+      <div className="flex items-center gap-2.5 flex-wrap">
+        <div
+          className="w-8 h-8 rounded-xl flex items-center justify-center bg-[var(--nm-bg)] shrink-0"
+          style={{ boxShadow: "var(--nm-raised-xs)" }}
+        >
+          <Calendar className="w-3.5 h-3.5 text-[#128C7E]" />
+        </div>
+
         <input
           type="date"
           value={dateStart}
           onChange={e => setDateStart(e.target.value)}
-          className="h-8 rounded-lg border border-slate-200 bg-white px-2.5 text-xs text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#128C7E]/50 focus-visible:border-[#128C7E]"
           aria-label="Start date"
+          className="h-8 rounded-xl px-3 text-xs text-foreground bg-[var(--nm-bg)] focus:outline-none"
+          style={{ boxShadow: "var(--nm-inset-sm)" }}
         />
-        <span className="text-xs text-slate-400">to</span>
+        <span className="text-xs text-muted-foreground font-medium">to</span>
         <input
           type="date"
           value={dateEnd}
           onChange={e => setDateEnd(e.target.value)}
-          className="h-8 rounded-lg border border-slate-200 bg-white px-2.5 text-xs text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#128C7E]/50 focus-visible:border-[#128C7E]"
           aria-label="End date"
+          className="h-8 rounded-xl px-3 text-xs text-foreground bg-[var(--nm-bg)] focus:outline-none"
+          style={{ boxShadow: "var(--nm-inset-sm)" }}
         />
         {(dateStart || dateEnd) && (
           <button
+            type="button"
             onClick={() => { setDateStart(""); setDateEnd("") }}
-            className="text-xs text-slate-400 hover:text-slate-600 underline underline-offset-2"
+            className="h-8 px-3 rounded-xl text-xs font-medium text-muted-foreground bg-[var(--nm-bg)] transition-all"
+            style={{ boxShadow: "var(--nm-raised-xs)" }}
           >
             Clear
           </button>
         )}
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8 shrink-0">
+      {/* Stat cards */}
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {statCards.map((stat, i) => (
-          <Card key={i} className="bg-white/80 border-slate-200 shadow-sm backdrop-blur-xl">
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-semibold text-slate-600 uppercase tracking-wider">{stat.title}</CardTitle>
-              <stat.icon className="w-4 h-4 text-slate-300" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-black text-slate-900">{loading ? "—" : stat.value}</div>
-              <p className="text-sm font-medium text-slate-500 flex items-center mt-2">
-                <TrendingUp className="w-4 h-4 mr-1 text-emerald-500" />
+          <div
+            key={i}
+            className="rounded-2xl p-5 bg-[var(--nm-bg)] flex flex-col gap-4"
+            style={{ boxShadow: "var(--nm-raised)" }}
+          >
+            <div
+              className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+              style={{ background: stat.bg, boxShadow: "var(--nm-inset-sm)" }}
+            >
+              <stat.icon className="w-4 h-4" style={{ color: stat.color }} />
+            </div>
+            <div>
+              <div className="font-display text-4xl font-bold text-foreground leading-none mb-1.5">
+                {loading ? "—" : stat.value}
+              </div>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                {stat.title}
+              </p>
+              <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
+                <TrendingUp className="w-3 h-3 text-[#10B981]" />
                 All time
               </p>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         ))}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="bg-white/80 border-slate-200 shadow-sm backdrop-blur-xl overflow-hidden">
-          <CardHeader>
-            <CardTitle className="text-xl font-bold text-slate-900">Posts Created (Last 8 Weeks)</CardTitle>
-          </CardHeader>
-          <CardContent className="border-t border-slate-100 bg-slate-50/50 p-4">
+      {/* Charts */}
+      <div className="grid gap-5 lg:grid-cols-2">
+
+        {/* Line chart — posts per week */}
+        <div
+          className="rounded-2xl p-6 bg-[var(--nm-bg)]"
+          style={{ boxShadow: "var(--nm-raised)" }}
+        >
+          <h2 className="font-display text-base font-semibold text-foreground mb-0.5">
+            Posts Created
+          </h2>
+          <p className="text-xs text-muted-foreground mb-5">Last 8 weeks</p>
+
+          <div
+            className="rounded-xl p-4 bg-[var(--nm-bg)]"
+            style={{ boxShadow: "var(--nm-inset-sm)" }}
+          >
             {loading ? (
-              <div className="h-[300px] flex items-center justify-center text-sm text-slate-400">Loading…</div>
+              <div className="h-[260px] flex items-center justify-center text-sm text-muted-foreground">
+                Loading…
+              </div>
             ) : posts.length === 0 ? (
-              <div className="h-[300px] flex items-center justify-center text-sm text-slate-400">No data yet — start publishing.</div>
+              <div className="h-[260px] flex items-center justify-center text-sm text-muted-foreground">
+                No data yet — start publishing.
+              </div>
             ) : (
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={weeklyData} margin={{ top: 8, right: 8, bottom: 8, left: -16 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                  <XAxis dataKey="week" tick={{ fontSize: 10, fill: "#94a3b8" }} />
-                  <YAxis tick={{ fontSize: 11, fill: "#94a3b8" }} allowDecimals={false} />
-                  <Tooltip contentStyle={{ borderRadius: "8px", border: "1px solid #e2e8f0", fontSize: "12px" }} />
-                  <Line type="monotone" dataKey="posts" stroke="#128C7E" strokeWidth={2} dot={{ fill: "#128C7E", r: 3 }} activeDot={{ r: 5 }} />
+              <ResponsiveContainer width="100%" height={260}>
+                <LineChart data={weeklyData} margin={{ top: 8, right: 8, bottom: 4, left: -16 }}>
+                  <CartesianGrid {...gridProps} />
+                  <XAxis dataKey="week" {...axisProps} />
+                  <YAxis {...axisProps} allowDecimals={false} />
+                  <Tooltip content={<NmTooltip />} />
+                  <Line
+                    type="monotone"
+                    dataKey="posts"
+                    stroke="#128C7E"
+                    strokeWidth={2.5}
+                    dot={{ fill: "#128C7E", r: 3, strokeWidth: 0 }}
+                    activeDot={{ r: 5, fill: "#128C7E", strokeWidth: 0 }}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        <Card className="bg-white/80 border-slate-200 shadow-sm backdrop-blur-xl overflow-hidden">
-          <CardHeader>
-            <CardTitle className="text-xl font-bold text-slate-900">Posts by Platform</CardTitle>
-          </CardHeader>
-          <CardContent className="border-t border-slate-100 bg-slate-50/50 p-4">
+        {/* Bar chart — posts by platform */}
+        <div
+          className="rounded-2xl p-6 bg-[var(--nm-bg)]"
+          style={{ boxShadow: "var(--nm-raised)" }}
+        >
+          <h2 className="font-display text-base font-semibold text-foreground mb-0.5">
+            Posts by Platform
+          </h2>
+          <p className="text-xs text-muted-foreground mb-5">All time distribution</p>
+
+          <div
+            className="rounded-xl p-4 bg-[var(--nm-bg)]"
+            style={{ boxShadow: "var(--nm-inset-sm)" }}
+          >
             {loading ? (
-              <div className="h-[300px] flex items-center justify-center text-sm text-slate-400">Loading…</div>
+              <div className="h-[260px] flex items-center justify-center text-sm text-muted-foreground">
+                Loading…
+              </div>
             ) : posts.length === 0 ? (
-              <div className="h-[300px] flex items-center justify-center text-sm text-slate-400">No data yet — start publishing.</div>
+              <div className="h-[260px] flex items-center justify-center text-sm text-muted-foreground">
+                No data yet — start publishing.
+              </div>
             ) : (
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={platformData} margin={{ top: 8, right: 8, bottom: 8, left: -16 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                  <XAxis dataKey="platform" tick={{ fontSize: 11, fill: "#94a3b8" }} />
-                  <YAxis tick={{ fontSize: 11, fill: "#94a3b8" }} allowDecimals={false} />
-                  <Tooltip contentStyle={{ borderRadius: "8px", border: "1px solid #e2e8f0", fontSize: "12px" }} />
-                  <Bar dataKey="posts" fill="#128C7E" radius={[4, 4, 0, 0]} />
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart data={platformData} margin={{ top: 8, right: 8, bottom: 4, left: -16 }}>
+                  <CartesianGrid {...gridProps} />
+                  <XAxis dataKey="platform" {...axisProps} />
+                  <YAxis {...axisProps} allowDecimals={false} />
+                  <Tooltip content={<NmTooltip />} />
+                  <Bar
+                    dataKey="posts"
+                    fill="#128C7E"
+                    radius={[6, 6, 0, 0]}
+                  />
                 </BarChart>
               </ResponsiveContainer>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   )
