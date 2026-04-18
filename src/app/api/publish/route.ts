@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 import { publishToLinkedIn, publishToX, publishToFacebook } from "@/lib/publishers"
+import { insertNotification } from "@/lib/notifications"
 
 export async function POST(req: NextRequest) {
   try {
@@ -82,6 +83,26 @@ export async function POST(req: NextRequest) {
         error_logs: results,
       })
       .eq("id", postRecord.id)
+
+    // Notify user of publish outcome
+    if (hasCompleteFailure) {
+      await insertNotification(
+        supabase, user.id,
+        'post_failed',
+        'Post failed to publish',
+        `"${content.slice(0, 60)}${content.length > 60 ? '…' : ''}" could not be published.`,
+        '/publishing',
+      )
+    } else {
+      const platformList = platforms.join(', ')
+      await insertNotification(
+        supabase, user.id,
+        'post_published',
+        `Post published on ${platformList}`,
+        `"${content.slice(0, 60)}${content.length > 60 ? '…' : ''}"`,
+        '/analytics',
+      )
+    }
 
     return NextResponse.json({ success: true, results, post: postRecord })
   } catch (error: unknown) {

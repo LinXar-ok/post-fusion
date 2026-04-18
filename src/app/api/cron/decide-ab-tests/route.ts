@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { pickAbWinner } from '@/lib/performance-coach'
+import { insertNotification } from '@/lib/notifications'
 
 export async function POST(req: NextRequest) {
   const secret = req.headers.get('x-cron-secret')
@@ -34,6 +35,18 @@ export async function POST(req: NextRequest) {
       .from('ab_tests')
       .update({ winner_post_id: winnerId, status: 'decided', decided_at: new Date().toISOString() })
       .eq('id', test.id)
+
+    // Notify the test owner
+    const { data: postRow } = await supabase.from('posts').select('user_id').eq('id', winnerId).single()
+    if (postRow?.user_id) {
+      await insertNotification(
+        supabase, postRow.user_id,
+        'ab_decided',
+        'A/B test decided',
+        `A winner was selected for your A/B test.`,
+        '/analytics',
+      )
+    }
 
     decided++
   }

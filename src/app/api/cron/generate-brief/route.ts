@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { buildBriefContext } from '@/lib/brand-brain'
+import { insertNotification } from '@/lib/notifications'
 import Groq from 'groq-sdk'
 
 function getWeekStart(date: Date): string {
@@ -82,6 +83,14 @@ export async function POST(req: NextRequest) {
         actions: result.actions ?? [],
         status: 'unread',
       })
+
+      await insertNotification(
+        supabase, userId,
+        'brief_ready',
+        'Weekly Brand Brief is ready',
+        'Your Brand Brain brief for this week is waiting for you.',
+        '/brand-brain',
+      )
 
       generated++
     } catch {
