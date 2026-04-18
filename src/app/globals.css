@@ -70,12 +70,14 @@
 
   /* Neumorphic shadows — blue-tinted dark + bright white highlight */
   --nm-bg: #E7F0FA;
-  --nm-raised:    6px 6px 14px rgba(46, 94, 153, 0.22), -6px -6px 14px rgba(255, 255, 255, 0.90);
-  --nm-raised-sm: 3px 3px  8px rgba(46, 94, 153, 0.18), -3px -3px  8px rgba(255, 255, 255, 0.85);
-  --nm-raised-xs: 2px 2px  5px rgba(46, 94, 153, 0.14), -2px -2px  5px rgba(255, 255, 255, 0.80);
-  --nm-inset:     inset 4px 4px 10px rgba(46, 94, 153, 0.20), inset -4px -4px 10px rgba(255, 255, 255, 0.85);
-  --nm-inset-sm:  inset 2px 2px  6px rgba(46, 94, 153, 0.17), inset -2px -2px  6px rgba(255, 255, 255, 0.80);
-  --nm-teal-glow: 0 0 0 2px rgba(46, 94, 153, 0.30);
+  --nm-raised-lg: 14px 14px 32px rgba(46, 94, 153, 0.34), -14px -14px 32px rgba(255, 255, 255, 1.00);
+  --nm-raised:    10px 10px 22px rgba(46, 94, 153, 0.30), -10px -10px 22px rgba(255, 255, 255, 0.98);
+  --nm-raised-sm: 5px  5px  14px rgba(46, 94, 153, 0.24), -5px  -5px  14px rgba(255, 255, 255, 0.95);
+  --nm-raised-xs: 3px  3px   7px rgba(46, 94, 153, 0.18), -3px  -3px   7px rgba(255, 255, 255, 0.90);
+  --nm-flat:      2px  2px   5px rgba(46, 94, 153, 0.12), -2px  -2px   5px rgba(255, 255, 255, 0.80);
+  --nm-inset:     inset 6px 6px 16px rgba(46, 94, 153, 0.26), inset -6px -6px 16px rgba(255, 255, 255, 0.92);
+  --nm-inset-sm:  inset 3px 3px  9px rgba(46, 94, 153, 0.20), inset -3px -3px  9px rgba(255, 255, 255, 0.88);
+  --nm-teal-glow: 0 0 0 2px rgba(18, 140, 126, 0.35), 0 4px 12px rgba(18, 140, 126, 0.20);
 
   /* shadcn tokens */
   --background:            oklch(0.948 0.020 234);   /* #E7F0FA */
@@ -130,14 +132,16 @@
   /* Surface: medium-dark navy derived from #0D2440 */
   --nm-bg: #1A3154;
 
-  /* Shadows: dark side carries subtle olive warmth (#363630 tint);
-     highlight carries a faint bronze warmth — breaks the pure blue monotony */
-  --nm-raised:    6px 6px 14px rgba(13, 18, 14, 0.70), -6px -6px 14px rgba(123, 164, 208, 0.06);
-  --nm-raised-sm: 3px 3px  8px rgba(13, 18, 14, 0.62), -3px -3px  8px rgba(123, 164, 208, 0.05);
-  --nm-raised-xs: 2px 2px  5px rgba(13, 18, 14, 0.52), -2px -2px  5px rgba(123, 164, 208, 0.04);
-  --nm-inset:     inset 4px 4px 10px rgba(13, 18, 14, 0.65), inset -4px -4px 10px rgba(123, 164, 208, 0.055);
-  --nm-inset-sm:  inset 2px 2px  6px rgba(13, 18, 14, 0.58), inset -2px -2px  6px rgba(123, 164, 208, 0.048);
-  --nm-teal-glow: 0 0 0 2px rgba(46, 94, 153, 0.40);
+  /* Shadows: dark side is near-black; highlight is a perceptible blue-silver
+     lifted from #7BA4D0 — increased opacity for visible 3-D depth */
+  --nm-raised-lg: 14px 14px 32px rgba(7, 13, 24, 0.90),   -14px -14px 32px rgba(123, 164, 208, 0.18);
+  --nm-raised:    10px 10px 22px rgba(7, 13, 24, 0.85),   -10px -10px 22px rgba(123, 164, 208, 0.16);
+  --nm-raised-sm: 5px  5px  14px rgba(7, 13, 24, 0.78),   -5px  -5px  14px rgba(123, 164, 208, 0.13);
+  --nm-raised-xs: 3px  3px   7px rgba(7, 13, 24, 0.68),   -3px  -3px   7px rgba(123, 164, 208, 0.10);
+  --nm-flat:      2px  2px   5px rgba(7, 13, 24, 0.55),   -2px  -2px   5px rgba(123, 164, 208, 0.07);
+  --nm-inset:     inset 6px 6px 16px rgba(7, 13, 24, 0.82), inset -6px -6px 16px rgba(123, 164, 208, 0.14);
+  --nm-inset-sm:  inset 3px 3px  9px rgba(7, 13, 24, 0.74), inset -3px -3px  9px rgba(123, 164, 208, 0.11);
+  --nm-teal-glow: 0 0 0 2px rgba(18, 140, 126, 0.45), 0 4px 14px rgba(18, 140, 126, 0.25);
 
   /* background = nm-bg (single-layer) */
   --background:            oklch(0.218 0.072 252);   /* #1A3154 */
@@ -213,12 +217,43 @@
    Neumorphic utility classes
    ───────────────────────────────────────────────────────────── */
 @layer utilities {
+  .nm-raised-lg { box-shadow: var(--nm-raised-lg); }
   .nm-raised    { box-shadow: var(--nm-raised); }
   .nm-raised-sm { box-shadow: var(--nm-raised-sm); }
   .nm-raised-xs { box-shadow: var(--nm-raised-xs); }
+  .nm-flat      { box-shadow: var(--nm-flat); }
   .nm-inset     { box-shadow: var(--nm-inset); }
   .nm-inset-sm  { box-shadow: var(--nm-inset-sm); }
   .nm-teal-ring { box-shadow: var(--nm-teal-glow); }
   .nm-pulse     { animation: brand-pulse 2s ease-in-out infinite; }
   .font-display { font-family: var(--font-display), var(--font-sans), sans-serif; }
+
+  /* Convex surface — catches light from top-left (for raised buttons/badges) */
+  .nm-convex {
+    background: linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--nm-bg) 85%, white 15%),
+      color-mix(in srgb, var(--nm-bg) 96%, black 4%)
+    );
+  }
+
+  /* Concave surface — light comes from bottom-right (for recessed inputs/troughs) */
+  .nm-concave {
+    background: linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--nm-bg) 96%, black 4%),
+      color-mix(in srgb, var(--nm-bg) 85%, white 15%)
+    );
+  }
+
+  /* Interactive nm element — smooth shadow transition on hover/active */
+  .nm-interactive {
+    transition: box-shadow 200ms ease;
+  }
+  .nm-interactive:hover {
+    box-shadow: var(--nm-raised-sm);
+  }
+  .nm-interactive:active {
+    box-shadow: var(--nm-inset-sm);
+  }
 }

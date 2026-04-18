@@ -41,7 +41,10 @@ export function Sidebar() {
   return (
     <aside
       className="w-64 h-screen hidden md:flex flex-col shrink-0 z-20 relative"
-      style={{ background: 'var(--nm-bg)' }}
+      style={{
+        background: 'var(--nm-bg)',
+        boxShadow: '4px 0 24px rgba(7, 13, 24, 0.18), 1px 0 0 rgba(46, 94, 153, 0.10)',
+      }}
     >
       {/* Logo */}
       <div className="h-16 flex items-center px-5">
@@ -76,7 +79,11 @@ export function Sidebar() {
                   ? 'text-[#2E5E99]'
                   : 'text-slate-500 dark:text-slate-400 hover:text-[#0D2440] dark:hover:text-foreground'
               )}
-              style={{ boxShadow: active ? 'var(--nm-inset-sm)' : undefined }}
+              style={{
+                boxShadow: active
+                  ? 'var(--nm-inset-sm)'
+                  : 'var(--nm-flat)',
+              }}
             >
               <item.icon
                 className={cn(
