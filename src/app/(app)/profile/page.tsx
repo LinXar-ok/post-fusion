@@ -75,9 +75,31 @@ export default function ProfilePage() {
     })
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+  const refreshMeta = () => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return
+      setMeta({
+        name:       (user.user_metadata?.name       as string) ?? '',
+        email:      user.email ?? '',
+        bio:        (user.user_metadata?.bio        as string) ?? '',
+        website:    (user.user_metadata?.website    as string) ?? '',
+        avatar_url: (user.user_metadata?.avatar_url as string) ?? '',
+      })
+      if (user.user_metadata?.avatar_url) {
+        setAvatarPreview(user.user_metadata.avatar_url as string)
+      }
+    })
+  }
+
   const [profileState, profileAction, profilePending] = useActionState(updateProfile, null)
   const [pwState,      pwAction,      pwPending]      = useActionState(changePassword, null)
   const [deleteState,  deleteAction,  deletePending]  = useActionState(deleteAccount, null)
+
+  useEffect(() => {
+    if (profileState && 'success' in profileState && profileState.success) {
+      refreshMeta()
+    }
+  }, [profileState]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const tabs: { id: TabId; label: string; danger?: boolean }[] = [
     { id: 'profile',  label: 'Edit Profile' },

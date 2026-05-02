@@ -72,7 +72,11 @@ export default function MediaLibraryPage() {
 
   const handleDelete = async (fileName: string) => {
     if (!userId) return
-    await supabase.storage.from("media").remove([`${userId}/${fileName}`])
+    const { error } = await supabase.storage.from("media").remove([`${userId}/${fileName}`])
+    if (error) {
+      console.error("Delete failed:", error.message)
+      return
+    }
     setFiles(prev => prev.filter(f => f.name !== fileName))
     if (previewUrl?.includes(fileName)) setPreviewUrl(null)
   }
